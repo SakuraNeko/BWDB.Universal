@@ -1,0 +1,10 @@
+﻿<Application
+    x:Class="BWDB.Universal.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BWDB.Universal"
+    RequestedTheme="Light">
+    <Application.Resources>
+        <SolidColorBrush x:Key="BackgroundAccentBrush" Color="#FF184689" />
+    </Application.Resources>
+</Application>

@@ -1,0 +1,73 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using SQLitePCL;
+using System.IO;
+using Windows.Storage;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Globalization;
+using SQLite;
+
+namespace BWDB.Core
+{
+    public class OSInformation
+    {
+        string dbFileName;
+        public OSInformation (string database)
+        {
+            dbFileName = database;
+        }
+        
+        public Build GetBuild(int ProductID, int BuildID)
+        {
+            var dbConnection = new SQLiteConnection(dbFileName);
+            
+            var data = new Build();
+            object[] args = { ProductID, BuildID };
+
+            var query = dbConnection.Query<Build> (
+                "SELECT * FROM BuildList " + 
+                "JOIN ProductList ON BuildList.ProductID = ProductList.ProductID " + 
+                "WHERE BuildList.ProductID = ? AND BuildID = ?", args);
+
+            if (query.Count > 0) data = query[0];
+            dbConnection.Dispose();
+            return data;
+        }
+
+        public List<Build> GetBuildsInProduct(int ProductID)
+        {
+            var dbConnection = new SQLiteConnection(dbFileName);
+
+      
+            object[] args = { ProductID};
+
+            var query = dbConnection.Query<Build>(
+                "SELECT * FROM BuildList " +
+                "JOIN ProductList ON BuildList.ProductID = ProductList.ProductID " +
+                 "WHERE BuildList.ProductID = ?", args);
+
+            dbConnection.Dispose();
+
+            return query;
+            
+        }
+        public List<Product> GetProducts()
+        {
+            var dbConnection = new SQLiteConnection(dbFileName);
+            //var query = new List<Product>();
+
+            var query = dbConnection.Query<Product>(
+                "SELECT * FROM ProductList " +
+                "JOIN Tags ON Tags.TagID = ProductList.TagID " +
+                "JOIN Family on Family.FamilyID = ProductList.FamilyID");
+
+            dbConnection.Dispose();
+            return query;
+        }
+    }
+
+}
