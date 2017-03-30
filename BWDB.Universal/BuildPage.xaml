@@ -24,7 +24,7 @@
 
         <SemanticZoom >
             <SemanticZoom.ZoomedInView >
-                <ListView x:Name="ZoomInListView">
+                <ListView x:Name="ZoomInListView" SelectionChanged="ZoomInListView_SelectionChanged">
 
                     <ListView.ItemContainerStyle >
                         <Style TargetType="ListViewItem">

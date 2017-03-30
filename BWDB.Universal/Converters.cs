@@ -77,7 +77,16 @@ namespace BWDB.Universal
                 var split = str.Split(c);
                 if (split.Count() >= 1)
                 {
-                    ret = split[0];
+                    char[] c1 = { '.' };
+                    var split1 = split[0].Split(c1);
+                    if (split1.Count() == 4)
+                    {
+                        ret = split[0];
+                    }
+                    else
+                    {
+                        ret = str;
+                    }
                 }
             }
             return ret;

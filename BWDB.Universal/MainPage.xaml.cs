@@ -26,9 +26,12 @@ namespace BWDB.Universal
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public static MainPage CurrentPage;
+
         public MainPage()
         {
             this.InitializeComponent();
+            CurrentPage = this;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -49,5 +52,6 @@ namespace BWDB.Universal
             PanelPageFrame.Navigate(typeof(ProductPage));
             MainPageFrame.Navigate(typeof(DetailPage));
         }
+        
     }
 }

@@ -33,9 +33,14 @@ namespace BWDB.Universal
             //System.Diagnostics.Debug.WriteLine(Windows.Storage.ApplicationData.Current.LocalFolder.Path);
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-             CurrentBuild = App.OSInformation.GetBuild(688, 550);
+            base.OnNavigatedTo(e);
+            if (e.Parameter is Build)
+            {
+                CurrentBuild = e.Parameter as Build;
+            }
         }
+        
     }
 }

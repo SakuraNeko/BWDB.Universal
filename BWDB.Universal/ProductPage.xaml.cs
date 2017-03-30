@@ -80,5 +80,15 @@ namespace BWDB.Universal
         {
             GetProductList();
         }
+
+        private void ZoomInListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            var Product = ZoomInListView.SelectedItem as Product;
+            MainPage.CurrentPage.LeftPageFrame.SetValue(Grid.ColumnProperty, 0);
+            MainPage.CurrentPage.LeftPageFrame.SetValue(Grid.ColumnSpanProperty, 2);
+            if (Product != null) MainPage.CurrentPage.LeftPageFrame.Navigate(typeof(BuildPage), Product.ProductID);
+        }
+        
     }
 }

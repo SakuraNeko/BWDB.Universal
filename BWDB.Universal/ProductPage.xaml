@@ -72,7 +72,7 @@
         </RelativePanel>
         <SemanticZoom Grid.Row="1" Margin="0" Grid.ColumnSpan="2">
             <SemanticZoom.ZoomedInView>
-                <ListView x:Name="ZoomInListView">
+                <ListView x:Name="ZoomInListView"  SelectionChanged="ZoomInListView_SelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ProductName}" Margin="0" TextWrapping="Wrap" VerticalAlignment="Center" Style="{ThemeResource BodyTextBlockStyle}"/>

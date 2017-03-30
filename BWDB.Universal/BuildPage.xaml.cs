@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BWDB.Core;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -22,14 +23,16 @@ namespace BWDB.Universal
     /// </summary>
     public sealed partial class BuildPage : Page
     {
+        public Product CurrentProduct;
+
         public BuildPage()
         {
             this.InitializeComponent();
         }
 
-        public void GetBuilds()
+        public void GetBuilds(int ProductID)
         {
-            var Builds = App.OSInformation.GetBuildsInProduct(688);
+            var Builds = App.OSInformation.GetBuildsInProduct(ProductID);
             var groupedBuilds = Builds.OrderBy(p => p.BuildID).GroupBy(p => p.Stage);
 
             var CollectionViewSource = new CollectionViewSource();
@@ -38,13 +41,29 @@ namespace BWDB.Universal
 
             ZoomInListView.ItemsSource = CollectionViewSource.View;
             ZoomOutListView.ItemsSource = CollectionViewSource.View.CollectionGroups;
+        }
 
-            
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (e.Parameter is int)
+            {
+                GetBuilds((int)e.Parameter);
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            GetBuilds();
+            //GetBuilds(CurrentProduct.ProductID);
+        }
+
+        private void ZoomInListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            var Build = ZoomInListView.SelectedItem as Build;
+            MainPage.CurrentPage.LeftPageFrame.SetValue(Grid.ColumnProperty, 0);
+            MainPage.CurrentPage.LeftPageFrame.SetValue(Grid.ColumnSpanProperty, 1);
+            if (Build != null) MainPage.CurrentPage.MainPageFrame.Navigate(typeof(DetailPage), Build);
         }
     }
 }

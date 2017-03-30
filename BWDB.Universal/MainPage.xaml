@@ -16,19 +16,23 @@
             <TextBox Margin="8" Width="300" HorizontalAlignment="Right"/>
         </Grid>
         <Grid Grid.Row="1">
-
-            <SplitView DisplayMode="Inline" IsPaneOpen="True">
+            <SplitView x:Name="SplitView" DisplayMode="Inline" IsPaneOpen="True"  x:FieldModifier="Public">
                 <SplitView.Pane>
-                    <Frame x:Name="PanelPageFrame"/>
+                    <Frame x:Name="PanelPageFrame" x:FieldModifier="Public"/>
                 </SplitView.Pane>
                 <SplitView.Content>
-                    <Frame x:Name="MainPageFrame" Grid.Column="1"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width=" 300"/>
+                            <ColumnDefinition />
+                            
+                        </Grid.ColumnDefinitions>
+                        <Frame x:Name="LeftPageFrame" Grid.Column="0" x:FieldModifier="Public"/>
+                        <Frame x:Name="MainPageFrame" Grid.Column="1" x:FieldModifier="Public"/>
+                    </Grid>
+                    
                 </SplitView.Content>
             </SplitView>
-            
-            
-            
-            
         </Grid>
     </Grid>
 </Page>
