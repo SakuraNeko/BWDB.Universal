@@ -5,34 +5,58 @@
     xmlns:local="using:BWDB.Universal"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" Loaded="Page_Loaded">
+    mc:Ignorable="d" Loaded="Page_Loaded" SizeChanged="Page_SizeChanged">
+
+    <Page.Resources >
+
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions >
-            <RowDefinition Height="48"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="{StaticResource BackgroundAccentBrush}">
-            <TextBox Margin="8" Width="300" HorizontalAlignment="Right"/>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup >
+                <VisualState >
+                    <VisualState.StateTriggers >
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="LeftPageFrame.(Grid.Column)" Value="0"/>
+                        <Setter Target="LeftPageFrame.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="MainPageGrid.(Grid.Column)" Value="0"/>
+                        <Setter Target="MainPageGrid.(Grid.ColumnSpan)" Value="2"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState >
+                    <VisualState.StateTriggers >
+                        <AdaptiveTrigger MinWindowWidth="640"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters >
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+
+
+        <Grid>
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+                <Frame x:Name="LeftPageFrame" Grid.Column="0" x:FieldModifier="Public"/>
+
+            <Grid x:Name="MainPageGrid" Grid.Column="1" Visibility="Collapsed"  x:FieldModifier="Public">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="48"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Background="{StaticResource BackgroundAccentBrush}"/>
+                <Frame x:Name="MainPageFrame" Grid.Row="1" x:FieldModifier="Public"/>
+            </Grid>
+            
         </Grid>
-        <Grid Grid.Row="1">
-            <SplitView x:Name="SplitView" DisplayMode="Inline" IsPaneOpen="True"  x:FieldModifier="Public">
-                <SplitView.Pane>
-                    <Frame x:Name="PanelPageFrame" x:FieldModifier="Public"/>
-                </SplitView.Pane>
-                <SplitView.Content>
-                    <Grid>
-                        <Grid.ColumnDefinitions >
-                            <ColumnDefinition Width=" 300"/>
-                            <ColumnDefinition />
-                            
-                        </Grid.ColumnDefinitions>
-                        <Frame x:Name="LeftPageFrame" Grid.Column="0" x:FieldModifier="Public"/>
-                        <Frame x:Name="MainPageFrame" Grid.Column="1" x:FieldModifier="Public"/>
-                    </Grid>
-                    
-                </SplitView.Content>
-            </SplitView>
-        </Grid>
+
+        
     </Grid>
 </Page>

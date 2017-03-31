@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using BWDB.Core;
+using Windows.UI.Core;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -30,8 +31,10 @@ namespace BWDB.Universal
             this.InitializeComponent();
         }
 
-        public void GetBuilds(int ProductID)
+        public void GetBuildList(int ProductID)
         {
+            BuildZoomInListView.SelectionChanged -= BuildZoomInListView_SelectionChanged;
+
             var Builds = App.OSInformation.GetBuildsInProduct(ProductID);
             var groupedBuilds = Builds.OrderBy(p => p.BuildID).GroupBy(p => p.Stage);
 
@@ -39,31 +42,117 @@ namespace BWDB.Universal
             CollectionViewSource.Source = groupedBuilds;
             CollectionViewSource.IsSourceGrouped = true;
 
-            ZoomInListView.ItemsSource = CollectionViewSource.View;
-            ZoomOutListView.ItemsSource = CollectionViewSource.View.CollectionGroups;
+            BuildZoomInListView.ItemsSource = CollectionViewSource.View;
+            BuildZoomOutListView.ItemsSource = CollectionViewSource.View.CollectionGroups;
+
+            BuildZoomInListView.SelectedItem = null;
+
+            BuildZoomInListView.SelectionChanged += BuildZoomInListView_SelectionChanged;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void GetProductList()
         {
-            base.OnNavigatedTo(e);
-            if (e.Parameter is int)
+            if (ProductZoomInListView == null) return;
+
+            //hack，防止刷新ProductList时发生SelectionChanged 然后列表被隐藏
+            ProductZoomInListView.SelectionChanged -= ProductZoomInListView_SelectionChanged;
+
+            var Products = App.OSInformation.GetProducts();
+            IEnumerable<IGrouping<string, Product>> groupedProducts = null;
+
+            //判断分类模式
+            if (RadioButton_Year.IsChecked == true)
             {
-                GetBuilds((int)e.Parameter);
+                groupedProducts = Products.OrderBy(p => p.Year).GroupBy(p => p.Year.ToString());
             }
+            else if (RadioButton_ProductLine.IsChecked == true)
+            {
+                groupedProducts = Products.OrderBy(p => p.TagID).ThenBy(p => p.ProductID).GroupBy(p => p.Tag);
+            }
+            else if (RadioButton_ProductFamily.IsChecked == true)
+            {
+                groupedProducts = Products.OrderBy(p => p.FamilyID).ThenBy(p => p.ProductID).GroupBy(p => p.Family);
+            }
+
+            var CollectionVS = new CollectionViewSource()
+            {
+                Source = groupedProducts,
+                IsSourceGrouped = true
+            };
+            ProductZoomInListView.ItemsSource = CollectionVS.View;
+            ProductZoomOutListView.ItemsSource = CollectionVS.View.CollectionGroups;
+
+            ProductZoomInListView.SelectedItem = null;
+
+            //恢复SelectionChanged
+            ProductZoomInListView.SelectionChanged += ProductZoomInListView_SelectionChanged;
         }
+        
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            //GetBuilds(CurrentProduct.ProductID);
+            GetProductList();
+
+            //第一次启动的时候强制刷新一下SelectItem
+            if (ProductZoomInListView != null)
+            {
+                ProductZoomInListView.SelectedItem = ProductZoomInListView.Items[0];
+            }
+
+            //SystemNavigationManager.GetForCurrentView().BackRequested += BuildPage_BackRequested;
         }
 
-        private void ZoomInListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void BuildPage_BackRequested(object sender, BackRequestedEventArgs e)
         {
+            var a = ((int)MainPage.CurrentPage.LeftPageFrame.GetValue(Grid.ColumnSpanProperty) == 2);
+            var b = (MainPage.CurrentPage.MainPageFrame.Visibility == Visibility.Visible);
 
-            var Build = ZoomInListView.SelectedItem as Build;
-            MainPage.CurrentPage.LeftPageFrame.SetValue(Grid.ColumnProperty, 0);
-            MainPage.CurrentPage.LeftPageFrame.SetValue(Grid.ColumnSpanProperty, 1);
-            if (Build != null) MainPage.CurrentPage.MainPageFrame.Navigate(typeof(DetailPage), Build);
+            if (a && b)
+            {
+                MainPage.CurrentPage.LeftPageFrame.Visibility = Visibility.Visible;
+                MainPage.CurrentPage.MainPageGrid.Visibility = Visibility.Collapsed;
+            }
         }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            GetProductList();
+        }
+
+        private void BuildZoomInListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var Build = BuildZoomInListView.SelectedItem as Build;
+            if (Build != null)
+            {
+                var View = SystemNavigationManager.GetForCurrentView();
+
+                if ((int)MainPage.CurrentPage.LeftPageFrame.GetValue(Grid.ColumnSpanProperty) == 2)
+                {
+                    MainPage.CurrentPage.LeftPageFrame.Visibility = Visibility.Collapsed;
+                    View.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                }
+
+                MainPage.CurrentPage.MainPageFrame.Navigate(typeof(DetailPage), Build);
+                MainPage.CurrentPage.MainPageGrid.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ProductZoomInListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var Product = ProductZoomInListView.SelectedItem as Product;
+            if (Product != null)
+            {
+                GetBuildList(Product.ProductID);
+
+                //值为1时是PC模式
+                if ((int)MainPage.CurrentPage.LeftPageFrame.GetValue (Grid.ColumnSpanProperty) == 1)
+                {
+                    BuildZoomInListView.SelectedItem = BuildZoomInListView.Items[0];
+                }
+
+                SplitView.IsPaneOpen = false;
+            }
+        }
+
     }
 }

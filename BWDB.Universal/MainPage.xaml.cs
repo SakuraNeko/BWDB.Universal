@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
 using System.Threading.Tasks;
+using Windows.UI.Core;
+using Windows.Foundation.Metadata;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -37,21 +39,68 @@ namespace BWDB.Universal
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             var View = ApplicationView.GetForCurrentView();
-            var BackgroundColor = Color.FromArgb(255, 24, 70, 137);
+            var BackgroundBrush = (SolidColorBrush)Application.Current.Resources["BackgroundAccentBrush"];
 
-            View.TitleBar.BackgroundColor = BackgroundColor;
-            View.TitleBar.ButtonBackgroundColor = BackgroundColor;
-            View.TitleBar.InactiveBackgroundColor = BackgroundColor;
-            View.TitleBar.ButtonInactiveBackgroundColor = BackgroundColor;
+            View.TitleBar.BackgroundColor = BackgroundBrush.Color;
+            View.TitleBar.ButtonBackgroundColor = BackgroundBrush.Color;
+            View.TitleBar.InactiveBackgroundColor = BackgroundBrush.Color;
+            View.TitleBar.ButtonInactiveBackgroundColor = BackgroundBrush.Color;
 
             View.TitleBar.ForegroundColor = Colors.White;
             View.TitleBar.ButtonForegroundColor = Colors.White;
             View.TitleBar.InactiveForegroundColor = Colors.White;
             View.TitleBar.ButtonInactiveForegroundColor = Colors.White;
 
-            PanelPageFrame.Navigate(typeof(ProductPage));
-            MainPageFrame.Navigate(typeof(DetailPage));
+            LeftPageFrame.Navigate(typeof(BuildPage));
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                System.Diagnostics.Debug.WriteLine("OK");
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = BackgroundBrush.Color;
+                statusBar.ForegroundColor = Colors.White;
+                statusBar.BackgroundOpacity = 1;
+            }
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+
         }
-        
+
+        private void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            var a = ((int)LeftPageFrame.GetValue(Grid.ColumnSpanProperty) == 2);
+            var b = (MainPageFrame.Visibility == Visibility.Visible);
+
+            if (a && b)
+            {
+                e.Handled = true;
+                LeftPageFrame.Visibility = Visibility.Visible ;
+                MainPageGrid.Visibility = Visibility.Collapsed;
+            }
+
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var View = SystemNavigationManager.GetForCurrentView();
+
+            //hack
+            //a: 当前是手机UI
+            //b: 当前在详情页
+            //以后肯定找个更靠谱的方式！！！
+            var a = ((int)LeftPageFrame.GetValue(Grid.ColumnSpanProperty) == 2);
+            var b = (MainPageGrid.Visibility == Visibility.Visible);
+
+            if ( a && b )
+            {
+                LeftPageFrame.Visibility = Visibility.Collapsed;
+                View.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            }
+            else
+            {
+                LeftPageFrame.Visibility = Visibility.Visible;
+                View.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
+        }
     }
 }

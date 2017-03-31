@@ -35,7 +35,7 @@
                 </VisualState>
                 <VisualState>
                     <VisualState.StateTriggers >
-                        <AdaptiveTrigger MinWindowWidth="640"/>
+                        <AdaptiveTrigger MinWindowWidth="960"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters >
                         <Setter Target="HeroImageTile.Visibility" Value="Visible"/>
@@ -65,8 +65,8 @@
                     <TextBlock  ></TextBlock>
                 </Grid>
 
-                    <TextBlock FontSize="36" x:Name="VersionLabel" FontWeight="Bold" RelativePanel.RightOf="HeroImageTile" RelativePanel.AlignTopWithPanel="True" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.Version}"/>
-                    <TextBlock FontSize="14" x:Name="ProductNameLabel" RelativePanel.RightOf="HeroImageTile" RelativePanel.Below="VersionLabel" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.ProductName}"/>
+                    <TextBlock FontSize="36" x:Name="VersionLabel" FontWeight="Bold" RelativePanel.RightOf="HeroImageTile" RelativePanel.AlignTopWithPanel="True" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.Version}" TextWrapping="Wrap"/>
+                    <TextBlock FontSize="14" x:Name="ProductNameLabel" RelativePanel.RightOf="HeroImageTile" RelativePanel.Below="VersionLabel" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.ProductName}" TextWrapping="Wrap"/>
                     <TextBlock FontSize="14" x:Name="Label" RelativePanel.RightOf="HeroImageTile" RelativePanel.Below="ProductNameLabel" Margin="20,0,0,0"/>
 
 
