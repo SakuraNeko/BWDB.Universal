@@ -1,11 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BWDB.Core
 {
+    public class ObservableProduct : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        Product product;
+        public Product Product
+        {
+            get => product;
+            set 
+            {
+                if (product != value)
+                {
+                    product = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Product"));
+                }
+            }
+        }
+    }
     public class Product
     {
         public string ProductName { get; set; }

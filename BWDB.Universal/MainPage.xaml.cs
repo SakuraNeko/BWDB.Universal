@@ -38,69 +38,75 @@ namespace BWDB.Universal
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var View = ApplicationView.GetForCurrentView();
-            var BackgroundBrush = (SolidColorBrush)Application.Current.Resources["BackgroundAccentBrush"];
+            var BackgroundColor = ((SolidColorBrush)Application.Current.Resources["BackgroundAccentBrush"]).Color;
 
-            View.TitleBar.BackgroundColor = BackgroundBrush.Color;
-            View.TitleBar.ButtonBackgroundColor = BackgroundBrush.Color;
-            View.TitleBar.InactiveBackgroundColor = BackgroundBrush.Color;
-            View.TitleBar.ButtonInactiveBackgroundColor = BackgroundBrush.Color;
+            //设置标题栏
+            var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+            var coreViewTitleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
 
-            View.TitleBar.ForegroundColor = Colors.White;
-            View.TitleBar.ButtonForegroundColor = Colors.White;
-            View.TitleBar.InactiveForegroundColor = Colors.White;
-            View.TitleBar.ButtonInactiveForegroundColor = Colors.White;
+            appTitleBar.BackgroundColor = Colors.Transparent;
+            appTitleBar.ButtonBackgroundColor = Colors.Transparent;
+            appTitleBar.InactiveBackgroundColor = Colors.Transparent;
+            appTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
-            LeftPageFrame.Navigate(typeof(BuildPage));
+            appTitleBar.ForegroundColor = Colors.White;
+            appTitleBar.ButtonForegroundColor = Colors.White;
+            appTitleBar.InactiveForegroundColor = Colors.White;
+            appTitleBar.ButtonInactiveForegroundColor = Colors.White;
 
+            coreViewTitleBar.ExtendViewIntoTitleBar = true;
+
+
+            // 返回键事件
+            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+
+
+            //设置手机状态栏
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
                 System.Diagnostics.Debug.WriteLine("OK");
                 var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = BackgroundBrush.Color;
+                statusBar.BackgroundColor = BackgroundColor;
                 statusBar.ForegroundColor = Colors.White;
                 statusBar.BackgroundOpacity = 1;
             }
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
-
+            //加载BuildPage
+            LeftPageFrame.Navigate(typeof(BuildPage));
         }
 
         private void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
         {
-            var a = ((int)LeftPageFrame.GetValue(Grid.ColumnSpanProperty) == 2);
-            var b = (MainPageFrame.Visibility == Visibility.Visible);
+            var navigationView = SystemNavigationManager.GetForCurrentView();
 
-            if (a && b)
+            if (MainPageFrame.Visibility == Visibility.Visible)
             {
-                e.Handled = true;
-                LeftPageFrame.Visibility = Visibility.Visible ;
-                MainPageGrid.Visibility = Visibility.Collapsed;
-            }
+                MainPageFrame.Visibility = Visibility.Collapsed;
+                LeftPageFrame.Visibility = Visibility.Visible;
 
+                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                e.Handled = true;
+            }
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var View = SystemNavigationManager.GetForCurrentView();
+            var navigationView = SystemNavigationManager.GetForCurrentView();
+            
+            var isPhoneUI = (ActualWidth < 640);
+            var isMainPageVisible = (MainPageFrame.Visibility == Visibility.Visible);
 
-            //hack
-            //a: 当前是手机UI
-            //b: 当前在详情页
-            //以后肯定找个更靠谱的方式！！！
-            var a = ((int)LeftPageFrame.GetValue(Grid.ColumnSpanProperty) == 2);
-            var b = (MainPageGrid.Visibility == Visibility.Visible);
-
-            if ( a && b )
+            if (isPhoneUI && isMainPageVisible)
             {
                 LeftPageFrame.Visibility = Visibility.Collapsed;
-                View.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             }
             else
             {
                 LeftPageFrame.Visibility = Visibility.Visible;
-                View.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             }
+            
         }
     }
 }
