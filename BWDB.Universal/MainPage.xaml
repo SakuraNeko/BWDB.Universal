@@ -8,7 +8,7 @@
     x:Name="Main"
     mc:Ignorable="d" Loaded="Page_Loaded" SizeChanged="Page_SizeChanged">
     
-    <Grid Background="{x:Null}">
+    <Grid Background="{x:Null}" x:Name="topGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup >
                 <VisualState >
@@ -39,13 +39,13 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions >
-                <RowDefinition Height="32"/>
+                <RowDefinition x:Name="TitleBarRow" Height="32"/>
                 <RowDefinition Height="48"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
 
             
-            <Grid Background="{StaticResource BackgroundAccentBrush}" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+            <Grid x:Name="TitleBarGrid" Background="{StaticResource BackgroundAccentBrush}" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
 
             <Frame x:Name="LeftPageFrame" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" x:FieldModifier="Public"/>
 
