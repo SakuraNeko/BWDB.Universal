@@ -7,14 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <local:MultiLineConverter x:Key="MultiLineConverter"/>
-        <local:MultiLineConverterForLanguageField x:Key="MultiLineConverterForLanguage"/>
-    </Page.Resources>
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup >
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup >
 
                 <VisualState>
                     <VisualState.StateTriggers >
@@ -50,20 +47,20 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
+        </VisualStateManager.VisualStateGroups>
 
         <ScrollViewer>
-        <Grid>
-            <Grid.RowDefinitions >
-                <RowDefinition Height="auto"/>
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            
-            <RelativePanel Grid.Row="0">
+            <Grid>
+                <Grid.RowDefinitions >
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-                <Grid x:Name="HeroImageTile" Width="150" Height="150" Margin="20,20,0,0" Background="{StaticResource BackgroundAccentBrush}">
-                    <TextBlock  ></TextBlock>
-                </Grid>
+                <RelativePanel Grid.Row="0">
+
+                    <Grid x:Name="HeroImageTile" Width="150" Height="150" Margin="20,20,0,0" Background="{StaticResource BackgroundAccentBrush}">
+                        <TextBlock  ></TextBlock>
+                    </Grid>
 
                     <TextBlock FontSize="36" x:Name="VersionLabel" FontWeight="Bold" RelativePanel.RightOf="HeroImageTile" RelativePanel.AlignTopWithPanel="True" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.Version}" TextWrapping="Wrap"/>
                     <TextBlock FontSize="14" x:Name="ProductNameLabel" RelativePanel.RightOf="HeroImageTile" RelativePanel.Below="VersionLabel" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.ProductName}" TextWrapping="Wrap"/>
@@ -72,13 +69,13 @@
 
                 </RelativePanel>
 
-            
-            <RelativePanel Grid.Row="1" Margin="20,20,20,0">
+
+                <RelativePanel Grid.Row="1" Margin="20,20,20,0">
 
 
-            <Grid x:Name="GalleryGrid">
-                <TextBlock FontSize="14" FontWeight="Bold" >Gallery</TextBlock>
-            </Grid>
+                    <Grid x:Name="GalleryGrid">
+                        <TextBlock FontSize="14" FontWeight="Bold" >Gallery</TextBlock>
+                    </Grid>
 
                     <StackPanel x:Name="InformationPanel">
                         <StackPanel x:Name="BuildTagGrid"  Margin="0,0,0,5">
@@ -90,18 +87,18 @@
                             <TextBlock Text="{Binding ElementName=buildPage, Path=CurrentBuild.Architecture}"/>
                         </StackPanel>
                         <StackPanel x:Name="SKUGrid" Margin="0,5,0,5">
-                            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,0,10,0">SKU</TextBlock>
-                            <TextBlock MaxLines="7"
+                            <TextBlock x:Name="SKULabel" FontSize="14" FontWeight="Bold" Margin="0,0,10,0">SKU</TextBlock>
+                            <TextBlock MaxLines="7" x:Name="SKUText"
                                        Text="{Binding ElementName=buildPage, Path=CurrentBuild.SKU, Converter={StaticResource MultiLineConverter}}"/>
-                            <Button Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5">More</Button>
+                            <Button x:Name="SKUMoreButton" Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5" Click="More_Click">More</Button>
 
 
                         </StackPanel>
                         <StackPanel x:Name="LanguageGrid"  Margin="0,5,0,5">
-                            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,0,10,0">Language</TextBlock>
-                            <TextBlock MaxLines="5"
+                            <TextBlock x:Name="LanguageLabel" FontSize="14" FontWeight="Bold" Margin="0,0,10,0">Language</TextBlock>
+                            <TextBlock MaxLines="5" x:Name="LanguageText"
                                        Text="{Binding ElementName=buildPage, Path=CurrentBuild.Language, Converter={StaticResource MultiLineConverterForLanguage}}"/>
-                            <Button Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5">More</Button>
+                            <Button x:Name="LanguageMoreButton" Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5" Click="More_Click" >More</Button>
                         </StackPanel>
                         <StackPanel x:Name="DetailsGrid"  Margin="0,5,0,5">
                             <TextBlock FontSize="14" FontWeight="Bold" Margin="0,0,10,0">Installation Information</TextBlock>
@@ -112,8 +109,34 @@
 
 
 
-        </Grid>
+            </Grid>
         </ScrollViewer>
+
+        <Grid Width="300" Height="auto" Margin="20" x:Name="DetailGrid" Background="{ThemeResource AppBarBackground}" BorderBrush="{ThemeResource AppBarButtonForeground}" BorderThickness="1" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <AppBarButton Icon="Cancel" IsCompact="True" Width="48" HorizontalAlignment="Right"/>
+            <Frame x:Name="DetailFrame" Grid.Row="1"></Frame>
+        </Grid>
+
+        <ContentDialog x:Name="DetailDialog" Style="{StaticResource ContentDialogStyle1}" Opened="DetailDialog_Opened" Closed="DetailDialog_Closed">
+            <ContentDialog.Content >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <AppBarButton Width="48" HorizontalAlignment="Right" Click="AppBarButton_Click" Icon="Cancel"/>
+                    <TextBox x:Name="DetailDialogTextBox" Grid.Row="1" BorderThickness="0" 
+                         IsReadOnly="True" Background="Transparent" Padding="0" 
+                         Margin="20,0,20,0" Style="{StaticResource TextBoxStyle1}"
+                         TextWrapping="Wrap"/>
+                </Grid>
+            </ContentDialog.Content>
+        </ContentDialog>
+
     </Grid>
 
 

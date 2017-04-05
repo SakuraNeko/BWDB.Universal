@@ -8,11 +8,7 @@
     x:Name="Main"
     mc:Ignorable="d" Loaded="Page_Loaded" SizeChanged="Page_SizeChanged">
     
-    <Page.Resources >
-
-    </Page.Resources>
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{x:Null}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup >
                 <VisualState >
@@ -48,8 +44,8 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
+            
             <Grid Background="{StaticResource BackgroundAccentBrush}" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-
 
             <Frame x:Name="LeftPageFrame" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" x:FieldModifier="Public"/>
 
@@ -59,9 +55,9 @@
                     <TransitionCollection>
                         <NavigationThemeTransition />
                     </TransitionCollection>
-
                 </Frame.ContentTransitions>
             </Frame>
+            
         </Grid>
 
         

@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage;
 using BWDB.Core;
+using Windows.UI.ViewManagement;
+using Windows.UI;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -41,6 +43,66 @@ namespace BWDB.Universal
                 CurrentBuild = e.Parameter as Build;
             }
         }
-        
+
+        private async void More_Click(object sender, RoutedEventArgs e)
+        {
+            var HeaderBinding = new Binding();
+            var ContentBinding = new Binding();
+
+            if (Equals(sender, SKUMoreButton))
+            {
+                HeaderBinding.Source = SKULabel;
+                ContentBinding.Source = SKUText;
+            }
+            else if (Equals(sender, LanguageMoreButton))
+            {
+                HeaderBinding.Source = LanguageLabel;
+                ContentBinding.Source = LanguageText;
+            }
+            else
+            {
+                HeaderBinding = null;
+                ContentBinding = null;
+            }
+
+            HeaderBinding.Path = new PropertyPath("Text");
+            ContentBinding.Path = new PropertyPath("Text");
+
+            DetailDialogTextBox.SetBinding(TextBox.HeaderProperty, HeaderBinding);
+            DetailDialogTextBox.SetBinding(TextBox.TextProperty, ContentBinding);
+
+            await DetailDialog.ShowAsync();
+        }
+
+
+        private void DetailDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {/*
+            var BackgroundColor = ((SolidColorBrush)Application.Current.Resources["BackgroundAccentBrush"]).Color;
+            var coreViewTitleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
+            var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+
+            appTitleBar.ButtonBackgroundColor = BackgroundColor;
+            appTitleBar.ButtonInactiveBackgroundColor = BackgroundColor;
+            coreViewTitleBar.ExtendViewIntoTitleBar = false;*/
+
+        }
+
+        private void DetailDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            /*
+            var coreViewTitleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
+            var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+
+            appTitleBar.ButtonBackgroundColor = Colors.Transparent;
+            appTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            coreViewTitleBar.ExtendViewIntoTitleBar = true;*/
+        }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            DetailDialog.Hide();
+        }
+
+
     }
 }

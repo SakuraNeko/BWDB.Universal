@@ -44,9 +44,9 @@ namespace BWDB.Universal
             var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
             var coreViewTitleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
 
-            appTitleBar.BackgroundColor = Colors.Transparent;
+            appTitleBar.BackgroundColor = BackgroundColor;
             appTitleBar.ButtonBackgroundColor = Colors.Transparent;
-            appTitleBar.InactiveBackgroundColor = Colors.Transparent;
+            appTitleBar.InactiveBackgroundColor = BackgroundColor;
             appTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
             appTitleBar.ForegroundColor = Colors.White;
@@ -55,7 +55,6 @@ namespace BWDB.Universal
             appTitleBar.ButtonInactiveForegroundColor = Colors.White;
 
             coreViewTitleBar.ExtendViewIntoTitleBar = true;
-
 
             // 返回键事件
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
@@ -73,6 +72,7 @@ namespace BWDB.Universal
 
             //加载BuildPage
             LeftPageFrame.Navigate(typeof(BuildPage));
+            
         }
 
         private void MainPage_BackRequested(object sender, BackRequestedEventArgs e)

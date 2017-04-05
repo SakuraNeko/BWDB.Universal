@@ -126,7 +126,6 @@ namespace BWDB.Universal
         {
             var Build = e.ClickedItem as Build;
             NavigateToBuild(Build);
-          
         }
         private void NavigateToBuild(Build build)
         {
