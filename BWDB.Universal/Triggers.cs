@@ -22,27 +22,4 @@ namespace BWDB.Universal
         }
 
     }
-
-    public class MainPageAdaptiveStateTrigger : StateTriggerBase
-    {
-        string state;
-
-        public string AdaptiveState
-        {
-            get
-            {
-                return state;
-            }
-            set
-            {
-                state = value;
-
-                if (MainPage.CurrentPage != null)
-                {
-                    SetActive(MainPage.CurrentPage.AdaptiveState.CurrentState.Name == state);
-                }
-                
-            }
-        }
-    }
 }

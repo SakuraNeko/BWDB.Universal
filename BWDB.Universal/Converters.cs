@@ -109,7 +109,7 @@ namespace BWDB.Universal
 
             if((bool)value)
             {
-                theme = ElementTheme.Default;
+                theme = ElementTheme.Light;
             }
             else
             {

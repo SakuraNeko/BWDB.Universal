@@ -71,13 +71,14 @@ namespace BWDB.Universal
             // 返回键事件
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
+            
             if (DeviceTypeState.CurrentState == Phone)
             {
                 //设置手机状态栏
                 var statusBar = StatusBar.GetForCurrentView();
                 statusBar.BackgroundColor = BackgroundColor;
                 statusBar.ForegroundColor = Colors.White;
-                statusBar.BackgroundOpacity = 1;
+                statusBar.BackgroundOpacity = 0.9;
             }
 
             //获取系统版本号
@@ -94,7 +95,10 @@ namespace BWDB.Universal
                 //创建spriteVisual
                 topSprite = compositor.CreateSpriteVisual();
                 //spriteVisual的控制范围
-                topSprite.Size = new System.Numerics.Vector2((float)PanelGrid.ActualWidth, (float)PanelGrid.ActualHeight);
+                if (!isPhoneUI)
+                {
+                    topSprite.Size = new System.Numerics.Vector2((float)PanelGrid.ActualWidth, (float)PanelGrid.ActualHeight);
+                }
                 ElementCompositionPreview.SetElementChildVisual(PanelGrid, topSprite);
 
                 topSprite.Brush = compositor.CreateHostBackdropBrush();
@@ -113,6 +117,9 @@ namespace BWDB.Universal
         private void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
         {
             var navigationView = SystemNavigationManager.GetForCurrentView();
+            var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+
+            var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
 
             if (MainPageFrame.Visibility == Visibility.Visible)
             {
@@ -122,11 +129,18 @@ namespace BWDB.Universal
                 navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
                 e.Handled = true;
             }
+
+            if (isPhoneUI)
+            {
+                appTitleBar.ButtonForegroundColor = Colors.White;
+            }
+            
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var navigationView = SystemNavigationManager.GetForCurrentView();
+            var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
 
             var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
             var isMainPageVisible = (MainPageFrame.Visibility == Visibility.Visible);
@@ -140,6 +154,15 @@ namespace BWDB.Universal
             {
                 LeftPageFrame.Visibility = Visibility.Visible;
                 navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
+
+            if (isPhoneUI && !isMainPageVisible)
+            {
+                appTitleBar.ButtonForegroundColor = Colors.White;
+            }
+            else
+            {
+                appTitleBar.ButtonForegroundColor = Colors.Black;
             }
 
             if (topSprite !=null)
@@ -277,6 +300,7 @@ namespace BWDB.Universal
             if (build != null)
             {
                 var View = SystemNavigationManager.GetForCurrentView();
+                var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
 
                 var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
                 if (isPhoneUI)
@@ -287,6 +311,8 @@ namespace BWDB.Universal
 
                 MainPageFrame.Navigate(typeof(DetailPage), build);
                 MainPageFrame.Visibility = Visibility.Visible;
+                appTitleBar.ButtonForegroundColor = Colors.Black;
+                
             }
 
         }
