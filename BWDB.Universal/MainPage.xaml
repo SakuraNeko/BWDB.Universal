@@ -10,8 +10,9 @@
     
     <Grid Background="{x:Null}" x:Name="topGrid">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup >
-                <VisualState >
+
+            <VisualStateGroup x:Name="AdaptiveState"  x:FieldModifier="Public">
+                <VisualState x:Name="PhoneUI"  x:FieldModifier="Public">
                     <VisualState.StateTriggers >
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
@@ -22,12 +23,29 @@
                         <Setter Target="MainPageFrame.(Grid.ColumnSpan)" Value="2"/>
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState >
+                <VisualState x:Name="DesktopUI"  x:FieldModifier="Public">
                     <VisualState.StateTriggers >
                         <AdaptiveTrigger MinWindowWidth="640"/>
                     </VisualState.StateTriggers>
                 </VisualState>
             </VisualStateGroup>
+            
+            <VisualStateGroup x:Name="DeviceTypeState" x:FieldModifier="Public">
+                <VisualState x:Name="Phone">
+                    <VisualState.StateTriggers >
+                        <local:DeviceFamilyTrigger DeviceFamily="Windows.Mobile"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TitleBarRow.Height" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Desktop">
+                    <VisualState.StateTriggers >
+                        <local:DeviceFamilyTrigger DeviceFamily="Windows.Desktop"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+            
         </VisualStateManager.VisualStateGroups>
 
 
@@ -40,15 +58,16 @@
 
             <Grid.RowDefinitions >
                 <RowDefinition x:Name="TitleBarRow" Height="32"/>
-                <RowDefinition Height="48"/>
+                
                 <RowDefinition />
             </Grid.RowDefinitions>
 
             
-            <Grid x:Name="TitleBarGrid" Background="{StaticResource BackgroundAccentBrush}" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
+            <Grid x:Name="TitleBarGrid" Background="White" Grid.Row="0" Grid.Column="1"/>
 
-            <Frame x:Name="LeftPageFrame" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" x:FieldModifier="Public"/>
-
+            <Grid x:Name="PanelGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Background="{StaticResource BackgroundAccentBrush}"/>
+            <Frame x:Name="LeftPageFrame" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:FieldModifier="Public"/>
+            
 
             <Frame x:Name="MainPageFrame" Grid.Row="2" Grid.Column="1" x:FieldModifier="Public" Visibility="Collapsed">
                 <Frame.ContentTransitions >

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 
 namespace BWDB.Universal
 {
@@ -98,4 +101,27 @@ namespace BWDB.Universal
         }
     }
 
+    public class SplitViewBackgroundConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            SolidColorBrush brush;
+
+            if((bool)value)
+            {
+                brush = (SolidColorBrush) Application.Current.Resources["BackgroundAccentBrush"];
+            }
+            else
+            {
+                brush = new SolidColorBrush(Colors.Transparent);
+            }
+
+            return brush;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

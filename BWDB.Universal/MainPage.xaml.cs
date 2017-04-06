@@ -34,7 +34,7 @@ namespace BWDB.Universal
     {
         public static MainPage CurrentPage;
         Compositor compositor;
-        SpriteVisual sprite;
+        SpriteVisual topSprite;
 
         public MainPage()
         {
@@ -61,27 +61,24 @@ namespace BWDB.Universal
             appTitleBar.ButtonInactiveForegroundColor = Colors.White;
 
             coreViewTitleBar.ExtendViewIntoTitleBar = true;
+            Window.Current.SetTitleBar(TitleBarGrid);
 
             // 返回键事件
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
 
-
-            //设置手机状态栏
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            if (DeviceTypeState.CurrentState == Phone)
             {
-                System.Diagnostics.Debug.WriteLine("OK");
+                //设置手机状态栏
                 var statusBar = StatusBar.GetForCurrentView();
                 statusBar.BackgroundColor = BackgroundColor;
                 statusBar.ForegroundColor = Colors.White;
                 statusBar.BackgroundOpacity = 1;
-
-                TitleBarRow.Height = new GridLength (0);
             }
 
             //加载BuildPage
             LeftPageFrame.Navigate(typeof(BuildPage));
 
-
+            
 
             //获取系统版本号
             //sv是版本号字符串 十六进制下四位分组得到 A.B.C.D 的格式 如 10.0.15063.0
@@ -89,43 +86,51 @@ namespace BWDB.Universal
             ulong v = ulong.Parse(sv);
             ulong v3 = (v & 0x00000000FFFF0000L) >> 16;
 
-            var isDesktop = (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop");
-
             //RS2透明效果测试
-            if (v3 >= 15031 && isDesktop)
+            if (v3 >= 15031 && DeviceTypeState.CurrentState == Desktop)
             {
-                compositor = ElementCompositionPreview.GetElementVisual(TitleBarGrid).Compositor;
-                sprite = compositor.CreateSpriteVisual();
+                compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
 
-                //透明区的宽高
-                sprite.Size = new System.Numerics.Vector2((float)TitleBarGrid.ActualWidth, (float)TitleBarGrid.ActualHeight);
-                ElementCompositionPreview.SetElementChildVisual(TitleBarGrid, sprite);
+                //创建spriteVisual
+                topSprite = compositor.CreateSpriteVisual();
+                //spriteVisual的控制范围
+                topSprite.Size = new System.Numerics.Vector2((float)PanelGrid.ActualWidth, (float)PanelGrid.ActualHeight);
+                ElementCompositionPreview.SetElementChildVisual(PanelGrid, topSprite);
 
+                /*
+                var blurEffect = new GaussianBlurEffect
+                {
+                    Name = "Blur",
+                    BlurAmount = 9.0f,
+                    Source = new CompositionEffectSourceParameter("source")
+                };
+
+                //染色
                 var colorEffect = new ColorSourceEffect
                 {
                     Name = "Tint",
                     Color = BackgroundColor
                 };
 
+                //将染色特效和brush合成的“特效”
                 var blendEffect = new BlendEffect
                 {
-                    Background = new CompositionEffectSourceParameter("source"),
+                    Background = blurEffect,   //这里定义了一个参数 待会儿可以向这个参数传数据
                     Foreground = colorEffect,
-                    Mode = BlendEffectMode.SoftLight
+                    Mode = BlendEffectMode.Overlay
                 };
 
-                var factory = compositor.CreateEffectFactory(
-                    blendEffect
-                    );
+                //factory将特效整合
+                var factory = compositor.CreateEffectFactory(blendEffect);
+                var topBrush = factory.CreateBrush();
 
-                var brush = factory.CreateBrush();
-
-
-                brush.SetSourceParameter("source", compositor.CreateHostBackdropBrush());
-
-                sprite.Brush = brush;
+                var hostBackdropBrush = compositor.CreateHostBackdropBrush();
+                topBrush.SetSourceParameter("source", hostBackdropBrush);
+                */
+                topSprite.Brush = compositor.CreateHostBackdropBrush();
+                
             }
-
+            
 
         }
 
@@ -146,8 +151,8 @@ namespace BWDB.Universal
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var navigationView = SystemNavigationManager.GetForCurrentView();
-            
-            var isPhoneUI = (ActualWidth < 640);
+
+            var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
             var isMainPageVisible = (MainPageFrame.Visibility == Visibility.Visible);
 
             if (isPhoneUI && isMainPageVisible)
@@ -161,9 +166,9 @@ namespace BWDB.Universal
                 navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             }
 
-            if (sprite !=null)
+            if (topSprite !=null)
             {
-                sprite.Size = new System.Numerics.Vector2((float)TitleBarGrid.ActualWidth, (float)TitleBarGrid.ActualHeight);
+                topSprite.Size = new System.Numerics.Vector2((float)PanelGrid.ActualWidth, (float)PanelGrid.ActualHeight);
             }
             
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.System.Profile;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -29,7 +30,7 @@ namespace BWDB.Universal
         public static string localDB = Path.Combine(dbFolder.Path, dbFileName);
         public static Uri embeddedDB = new Uri("ms-appx:///Assets/" + dbFileName);
         public static OSInformation OSInformation;
-
+        
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
         /// 已执行，逻辑上等同于 main() 或 WinMain()。
@@ -38,7 +39,6 @@ namespace BWDB.Universal
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-
         }
 
         /// <summary>

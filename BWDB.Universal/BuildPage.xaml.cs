@@ -27,6 +27,7 @@ namespace BWDB.Universal
     {
         static ObservableProduct currentProduct = new ObservableProduct();
         public static ObservableProduct CurrentProduct { get => currentProduct; set => currentProduct = value; }
+        MainPage mainPage = MainPage.CurrentPage;
 
         public BuildPage()
         {
@@ -112,7 +113,7 @@ namespace BWDB.Universal
             {
                 GetBuildList(CurrentProduct.Product.ProductID);
 
-                var isPhoneUI = (MainPage.CurrentPage.ActualWidth < 640);
+                var isPhoneUI = (mainPage.AdaptiveState.CurrentState == mainPage.PhoneUI);
                 if (!isPhoneUI && BuildZoomInListView.Items.Count>0)
                 {
                     NavigateToBuild(BuildZoomInListView.Items[0] as Build);
@@ -133,15 +134,15 @@ namespace BWDB.Universal
             {
                 var View = SystemNavigationManager.GetForCurrentView();
 
-                var isPhoneUI = (MainPage.CurrentPage.ActualWidth < 640);
+                var isPhoneUI = (mainPage.AdaptiveState.CurrentState == mainPage.PhoneUI);
                 if (isPhoneUI)
                 {
-                    MainPage.CurrentPage.LeftPageFrame.Visibility = Visibility.Collapsed;
+                    mainPage.LeftPageFrame.Visibility = Visibility.Collapsed;
                     View.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 }
 
-                MainPage.CurrentPage.MainPageFrame.Navigate(typeof(DetailPage), build);
-                MainPage.CurrentPage.MainPageFrame.Visibility = Visibility.Visible;
+                mainPage.MainPageFrame.Navigate(typeof(DetailPage), build);
+                mainPage.MainPageFrame.Visibility = Visibility.Visible;
             }
 
         }
