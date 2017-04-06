@@ -8,5 +8,5 @@
     
     <local:MultiLineConverter x:Key="MultiLineConverter"/>
     <local:MultiLineConverterForLanguageField x:Key="MultiLineConverterForLanguage"/>
-    <local:SplitViewBackgroundConverter x:Key="SplitViewBackgroundConverter"/>
+    <local:SplitViewThemeConverter x:Key="SplitViewThemeConverter"/>
 </ResourceDictionary>

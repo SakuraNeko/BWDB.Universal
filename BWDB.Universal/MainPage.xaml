@@ -6,7 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Main"
-    mc:Ignorable="d" Loaded="Page_Loaded" SizeChanged="Page_SizeChanged">
+    mc:Ignorable="d" 
+    Loaded="Page_Loaded" SizeChanged="Page_SizeChanged"
+    FocusEngaged="Main_FocusEngaged" FocusDisengaged="Main_FocusDisengaged" >
     
     <Grid Background="{x:Null}" x:Name="topGrid">
         <VisualStateManager.VisualStateGroups>
@@ -19,8 +21,10 @@
                     <VisualState.Setters>
                         <Setter Target="LeftPageFrame.(Grid.Column)" Value="0"/>
                         <Setter Target="LeftPageFrame.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="PanelGrid.(Grid.ColumnSpan)" Value="2"/>
                         <Setter Target="MainPageFrame.(Grid.Column)" Value="0"/>
                         <Setter Target="MainPageFrame.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="TitleBarGrid.Background" Value="{StaticResource BackgroundAccentBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DesktopUI"  x:FieldModifier="Public">
@@ -62,10 +66,10 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            
-            <Grid x:Name="TitleBarGrid" Background="White" Grid.Row="0" Grid.Column="1"/>
 
-            <Grid x:Name="PanelGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Background="{StaticResource BackgroundAccentBrush}"/>
+            <Grid x:Name="TitleBarGrid" Background="Transparent" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+            <Grid x:Name="PanelGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"/>
             <Frame x:Name="LeftPageFrame" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:FieldModifier="Public"/>
             
 

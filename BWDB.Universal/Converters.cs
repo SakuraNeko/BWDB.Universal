@@ -101,22 +101,22 @@ namespace BWDB.Universal
         }
     }
 
-    public class SplitViewBackgroundConverter : IValueConverter
+    public class SplitViewThemeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            SolidColorBrush brush;
+            ElementTheme theme;
 
             if((bool)value)
             {
-                brush = (SolidColorBrush) Application.Current.Resources["BackgroundAccentBrush"];
+                theme = ElementTheme.Default;
             }
             else
             {
-                brush = new SolidColorBrush(Colors.Transparent);
+                theme = ElementTheme.Dark;
             }
 
-            return brush;
+            return theme;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

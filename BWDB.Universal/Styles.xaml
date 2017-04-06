@@ -62,7 +62,7 @@
                                 <VisualState x:Name="Checked">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames  Storyboard.TargetName="Contents" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundChromeWhiteBrush}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -87,7 +87,7 @@
         </Setter>
     </Style>
     
-    <!--
+    
     <Style x:Key="SplitViewTogglePaneButtonStyle" TargetType="ToggleButton">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="MinHeight" Value="48" />
@@ -99,7 +99,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundChromeWhiteBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlBackgroundBaseHighBrush}" />
         <Setter Property="Content" Value="&#xE700;" />
         <Setter Property="AutomationProperties.Name" Value="Navigation" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
@@ -143,10 +143,6 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid.ColumnDefinitions >
-                            <ColumnDefinition Width="48"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
 
                         <TextBlock Text="&#xE700;" FontSize="16" Grid.Column="0"
                                      FontFamily="{StaticResource SymbolThemeFontFamily}" 
@@ -154,26 +150,17 @@
                                      VerticalAlignment="Center"
                                      Margin="0,0,0,0">
                         </TextBlock>
-                       
-                        <ContentPresenter x:Name="ContentPresenter" Grid.Column="1" 
-                                          Content="{TemplateBinding Content}"
-                                          Margin="{TemplateBinding Padding}"
-                                              
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          AutomationProperties.AccessibilityView="Raw" TextWrapping="Wrap"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    -->
+    
 
-
-    <Style x:Key="SplitViewTogglePaneButtonStyle" TargetType="ToggleButton">
+<!--
+    <Style x:Key="SplitViewTogglePaneButtonStyle" TargetType="Button">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="MinHeight" Value="48" />
-
         <Setter Property="Margin" Value="0,0,0,0" />
         <Setter Property="Padding" Value="0,0,0,0" />
         <Setter Property="HorizontalAlignment" Value="Left" />
@@ -188,7 +175,7 @@
         <Setter Property="FocusVisualMargin" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ToggleButton">
+                <ControlTemplate TargetType="Button">
                     <Grid x:Name="LayoutRoot"
                           Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
@@ -196,29 +183,14 @@
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(Grid.Background)">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconLayout" Storyboard.TargetProperty="(Grid.Background)">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(Grid.Background)">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Checked"/>
-                                <VisualState x:Name="CheckedPointerOver">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(Grid.Background)">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="CheckedPressed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(Grid.Background)">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconLayout" Storyboard.TargetProperty="(Grid.Background)">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -230,12 +202,15 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="&#xE700;" FontSize="16" Grid.Column="0"
+                        <Grid x:Name="IconLayout" Grid.Column="0">
+                            <TextBlock Text="&#xE700;" FontSize="16" Grid.Column="0"
                                      FontFamily="{StaticResource SymbolThemeFontFamily}" 
                                      HorizontalAlignment="Center" 
                                      VerticalAlignment="Center"
                                      Margin="0,0,0,0">
-                        </TextBlock>
+                            </TextBlock>
+                        </Grid>
+
                         <ContentPresenter x:Name="ContentPresenter" Grid.Column="1" 
                                           Content="{TemplateBinding Content}"
                                           Margin="{TemplateBinding Padding}"
@@ -248,7 +223,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+-->
     <Style TargetType="ContentDialog" x:Name="ContentDialogStyle1">
         <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{ThemeResource ContentDialogBackground}" />

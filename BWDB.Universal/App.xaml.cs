@@ -119,5 +119,6 @@ namespace BWDB.Universal
             //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
         }
+       
     }
 }

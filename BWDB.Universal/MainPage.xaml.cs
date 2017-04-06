@@ -44,24 +44,25 @@ namespace BWDB.Universal
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
+
             var BackgroundColor = ((SolidColorBrush)Application.Current.Resources["BackgroundAccentBrush"]).Color;
 
             //设置标题栏
             var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
             var coreViewTitleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
 
-            appTitleBar.BackgroundColor = BackgroundColor;
+            appTitleBar.BackgroundColor = Colors.Transparent;
             appTitleBar.ButtonBackgroundColor = Colors.Transparent;
-            appTitleBar.InactiveBackgroundColor = BackgroundColor;
+            appTitleBar.InactiveBackgroundColor = Colors.Transparent;
             appTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-
-            appTitleBar.ForegroundColor = Colors.White;
-            appTitleBar.ButtonForegroundColor = Colors.White;
-            appTitleBar.InactiveForegroundColor = Colors.White;
-            appTitleBar.ButtonInactiveForegroundColor = Colors.White;
-
+            
             coreViewTitleBar.ExtendViewIntoTitleBar = true;
-            Window.Current.SetTitleBar(TitleBarGrid);
+            
+            if (isPhoneUI)
+            {
+                appTitleBar.ButtonForegroundColor = Colors.White;
+            }
 
             // 返回键事件
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
@@ -74,11 +75,6 @@ namespace BWDB.Universal
                 statusBar.ForegroundColor = Colors.White;
                 statusBar.BackgroundOpacity = 1;
             }
-
-            //加载BuildPage
-            LeftPageFrame.Navigate(typeof(BuildPage));
-
-            
 
             //获取系统版本号
             //sv是版本号字符串 十六进制下四位分组得到 A.B.C.D 的格式 如 10.0.15063.0
@@ -97,40 +93,12 @@ namespace BWDB.Universal
                 topSprite.Size = new System.Numerics.Vector2((float)PanelGrid.ActualWidth, (float)PanelGrid.ActualHeight);
                 ElementCompositionPreview.SetElementChildVisual(PanelGrid, topSprite);
 
-                /*
-                var blurEffect = new GaussianBlurEffect
-                {
-                    Name = "Blur",
-                    BlurAmount = 9.0f,
-                    Source = new CompositionEffectSourceParameter("source")
-                };
-
-                //染色
-                var colorEffect = new ColorSourceEffect
-                {
-                    Name = "Tint",
-                    Color = BackgroundColor
-                };
-
-                //将染色特效和brush合成的“特效”
-                var blendEffect = new BlendEffect
-                {
-                    Background = blurEffect,   //这里定义了一个参数 待会儿可以向这个参数传数据
-                    Foreground = colorEffect,
-                    Mode = BlendEffectMode.Overlay
-                };
-
-                //factory将特效整合
-                var factory = compositor.CreateEffectFactory(blendEffect);
-                var topBrush = factory.CreateBrush();
-
-                var hostBackdropBrush = compositor.CreateHostBackdropBrush();
-                topBrush.SetSourceParameter("source", hostBackdropBrush);
-                */
                 topSprite.Brush = compositor.CreateHostBackdropBrush();
                 
             }
-            
+
+            //加载BuildPage
+            LeftPageFrame.Navigate(typeof(BuildPage));
 
         }
 
@@ -168,9 +136,47 @@ namespace BWDB.Universal
 
             if (topSprite !=null)
             {
-                topSprite.Size = new System.Numerics.Vector2((float)PanelGrid.ActualWidth, (float)PanelGrid.ActualHeight);
+                var size = topSprite.Size;
+
+                if (isPhoneUI)
+                {
+                    size.X = 0f;
+                    size.Y = 0f;
+                }
+                else
+                {
+                    size.X = (float)PanelGrid.ActualWidth;
+                    size.Y = (float)PanelGrid.ActualHeight;
+                }
+
+                topSprite.Size = size;
             }
             
+        }
+        
+
+        private void Main_FocusEngaged(Control sender, FocusEngagedEventArgs args)
+        {
+            var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
+            
+            if (topSprite != null && !isPhoneUI)
+            {
+                var size = topSprite.Size;
+                size.X = (float)PanelGrid.ActualWidth;
+                size.Y = (float)PanelGrid.ActualHeight;
+                topSprite.Size = size;
+            }
+        }
+
+        private void Main_FocusDisengaged(Control sender, FocusDisengagedEventArgs args)
+        {
+            if (topSprite != null)
+            {
+                var size = topSprite.Size;
+                size.X = 0f;
+                size.Y = 0f;
+                topSprite.Size = size;
+            }
         }
     }
 }

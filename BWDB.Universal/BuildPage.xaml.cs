@@ -146,5 +146,10 @@ namespace BWDB.Universal
             }
 
         }
+
+        private void hamburger_Click(object sender, RoutedEventArgs e)
+        {
+            SplitView.IsPaneOpen = true;
+        }
     }
 }
