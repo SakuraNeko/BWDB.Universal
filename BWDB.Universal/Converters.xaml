@@ -5,8 +5,14 @@
     
     <local:BuildTagStripConverter x:Name="BuildTagStripConverter"/>
     <local:VersionStripConverter x:Name="VersionStripConverter"/>
-    
+    <local:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter"/>
+    <local:BooleanReverseToVisibilityConverter x:Name="BooleanReverseToVisibilityConverter"/>
+
     <local:MultiLineConverter x:Key="MultiLineConverter"/>
     <local:MultiLineConverterForLanguageField x:Key="MultiLineConverterForLanguage"/>
+    <local:MultiLineConverterForProductKey x:Key="MultiLineConverterForProductKey"/>
+    <local:CodenameAndStageConverter x:Key="CodenameAndStageConverter"/>
+    <local:MoreButtonVisibilityConverter x:Key="MoreButtonVisibilityConverter"/>
+
     <local:SplitViewThemeConverter x:Key="SplitViewThemeConverter"/>
 </ResourceDictionary>

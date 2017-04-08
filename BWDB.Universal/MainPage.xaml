@@ -8,8 +8,11 @@
     x:Name="Main"
     mc:Ignorable="d" 
     Loaded="Page_Loaded" SizeChanged="Page_SizeChanged"
-    FocusEngaged="Main_FocusEngaged" FocusDisengaged="Main_FocusDisengaged" >
-    
+    >
+    <Page.Resources>
+
+    </Page.Resources>
+
     <Grid Background="{x:Null}" x:Name="topGrid">
         <VisualStateManager.VisualStateGroups>
 
@@ -19,6 +22,7 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="LeftPanel.Width" Value="0"/>
                         <Setter Target="LeftPageFrame.(Grid.Column)" Value="0"/>
                         <Setter Target="LeftPageFrame.(Grid.ColumnSpan)" Value="2"/>
                         <Setter Target="PanelGrid.(Grid.ColumnSpan)" Value="2"/>
@@ -32,7 +36,7 @@
                     </VisualState.StateTriggers>
                 </VisualState>
             </VisualStateGroup>
-            
+
             <VisualStateGroup x:Name="DeviceTypeState" x:FieldModifier="Public">
                 <VisualState x:Name="Phone">
                     <VisualState.StateTriggers >
@@ -51,14 +55,14 @@
                     </VisualState.StateTriggers>
                 </VisualState>
             </VisualStateGroup>
-            
+
         </VisualStateManager.VisualStateGroups>
 
 
 
         <Grid>
             <Grid.ColumnDefinitions >
-                <ColumnDefinition Width="320"/>
+                <ColumnDefinition x:Name="LeftPanel" Width="350"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
@@ -66,7 +70,7 @@
 
             <Grid x:Name="PanelGrid" Grid.Column="0"/>
 
-            <Grid x:Name="LeftPageFrame" Grid.Column="0" Background="#D0184689">
+            <Grid x:Name="LeftPageFrame" Grid.Column="0" Background="{StaticResource BWDB_MediumAccentBrush}">
 
                 <SplitView x:Name="SplitView" DisplayMode="Overlay" IsPaneOpen="{Binding ElementName=hamburger, Path=IsChecked, Mode=TwoWay}"  x:FieldModifier="Public">
                     <SplitView.Pane>
@@ -77,10 +81,10 @@
                             </Grid.RowDefinitions>
 
                             <StackPanel Orientation="Horizontal"  Grid.Row="0" Margin="10">
-                                <TextBlock x:Name="Caption" Text="Group by:" VerticalAlignment="Center" HorizontalAlignment="Left" Width="80" Padding="0,5,0,5" Style="{ThemeResource BaseTextBlockStyle}"/>
-                                <RadioButton IsChecked="True" x:Name="RadioButton_Year" Content="Year" Style="{StaticResource RadioButtonStyle1}" Checked="RadioButton_Checked"/>
-                                <RadioButton x:Name="RadioButton_ProductFamily" Content="Family" Style="{StaticResource RadioButtonStyle1}" Checked="RadioButton_Checked"/>
-                                <RadioButton x:Name="RadioButton_ProductLine" Content="Categories" Style="{StaticResource RadioButtonStyle1}" Checked="RadioButton_Checked"/>
+                                <TextBlock x:Name="Caption" Text="分组" VerticalAlignment="Center" HorizontalAlignment="Left" Width="auto" Padding="0,5,5,5" Style="{ThemeResource BaseTextBlockStyle}"/>
+                                <RadioButton IsChecked="True" x:Name="RadioButton_Year" Content="发布年份" Width="auto" Padding="5" Style="{StaticResource RadioButtonStyle1}" Checked="RadioButton_Checked"/>
+                                <RadioButton x:Name="RadioButton_ProductFamily" Content="产品家族" Width="auto" Padding="5" Style="{StaticResource RadioButtonStyle1}" Checked="RadioButton_Checked"/>
+                                <RadioButton x:Name="RadioButton_ProductLine" Content="类别" Width="auto" Padding="5" Style="{StaticResource RadioButtonStyle1}" Checked="RadioButton_Checked"/>
                             </StackPanel>
 
                             <SemanticZoom Grid.Row="1" Margin="0" Grid.ColumnSpan="2">
@@ -122,9 +126,23 @@
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Margin="56,0,10,0" Grid.Row="0" 
-                               Text="{Binding ElementName=Main, Path=CurrentProduct.Product.ProductName}" 
-                               VerticalAlignment="Center" TextWrapping="Wrap"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="48"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="56,0,8,0" Grid.Column="0"
+                                           Text="{Binding ElementName=Main, Path=CurrentProduct.Product.ProductName}" 
+                                           VerticalAlignment="Center" TextWrapping="Wrap"
+                                           Visibility="{Binding ElementName=SearchToggle, Path=IsChecked, Converter={StaticResource BooleanReverseToVisibilityConverter}}"/>
+
+                                <ToggleButton Height="48" Width="48" Grid.Column="1" HorizontalAlignment="Center"  x:Name="SearchToggle"
+                                  Style="{StaticResource SearchTogglePaneButtonStyle}" Checked="SearchToggle_Checked" Unchecked="SearchToggle_Unchecked" />
+                                <TextBox x:Name="SearchBox" TextChanged="SearchBox_TextChanged" PlaceholderText="搜索" BorderThickness="0" RequestedTheme="Light"
+                                         Visibility="{Binding ElementName=SearchToggle, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxStyle1}" ></TextBox>
+
+                            </Grid>
+
 
                             <SemanticZoom Grid.Row="1">
                                 <SemanticZoom.ZoomedInView >
@@ -169,6 +187,7 @@
 
                 <ToggleButton  Margin="0,32,0,0" Height="48" Grid.Column="0" HorizontalAlignment="Left" x:Name="hamburger"
                                   Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                               Visibility="{Binding ElementName=SearchToggle, Path=IsChecked, Converter={StaticResource BooleanReverseToVisibilityConverter}}"
                        RequestedTheme="{Binding ElementName=SplitView, Path=IsPaneOpen, Converter={StaticResource SplitViewThemeConverter}}"/>
 
             </Grid>
@@ -182,6 +201,6 @@
             </Frame>
         </Grid>
 
-        
+
     </Grid>
 </Page>

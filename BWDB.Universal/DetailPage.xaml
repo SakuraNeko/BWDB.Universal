@@ -7,9 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Resources >
-
-    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <VisualStateManager.VisualStateGroups>
@@ -20,7 +17,6 @@
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters >
-                        <Setter Target="HeroImageTile.Visibility" Value="Collapsed"/>
                         <Setter Target="GalleryGrid.MinHeight" Value="40"/>
                         <Setter Target="GalleryGrid.(RelativePanel.LeftOf)" Value=""/>
                         <Setter Target="GalleryGrid.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
@@ -38,7 +34,6 @@
                         <AdaptiveTrigger MinWindowWidth="960"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters >
-                        <Setter Target="HeroImageTile.Visibility" Value="Visible"/>
                         <Setter Target="GalleryGrid.(RelativePanel.LeftOf)" Value="InformationPanel"/>
                         <Setter Target="GalleryGrid.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
                         <Setter Target="GalleryGrid.(RelativePanel.AlignTopWithPanel)" Value="True"/>
@@ -50,9 +45,19 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState >
+                    <VisualState.StateTriggers>
+                        <local:DeviceFamilyTrigger DeviceFamily="Windows.Desktop"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters >
+                        <Setter Target="ExportButton.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <ScrollViewer>
+        <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.RowDefinitions >
                     <RowDefinition Height="auto"/>
@@ -61,15 +66,10 @@
 
                 <RelativePanel Grid.Row="0">
 
-                    <Grid x:Name="HeroImageTile" Width="150" Height="150" Margin="20,20,0,0" Background="{StaticResource BackgroundAccentBrush}">
-                        <FontIcon FontFamily="Get Started MDL2 Assets" Glyph="&#xE782;" Foreground="White" FontSize="80" Width="150" Height="150"/>
-                        <FontIcon FontFamily="Marlett" Glyph="&#xF057;" Foreground="White" FontSize="120" Margin="0,-38,0,0" Width="150" Height="150"/>
-                        <FontIcon FontFamily="Wingdings" Glyph="&#xF0FF;" Foreground="White" FontSize="96" Width="150" Height="150"/>
-                    </Grid>
 
-                    <TextBlock FontSize="36" x:Name="VersionLabel" FontWeight="Bold" RelativePanel.RightOf="HeroImageTile" RelativePanel.AlignTopWithPanel="True" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.Version}" TextWrapping="Wrap"/>
-                    <TextBlock FontSize="14" x:Name="ProductNameLabel" RelativePanel.RightOf="HeroImageTile" RelativePanel.Below="VersionLabel" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.ProductName}" TextWrapping="Wrap"/>
-                    <TextBlock FontSize="14" x:Name="Label" RelativePanel.RightOf="HeroImageTile" RelativePanel.Below="ProductNameLabel" Margin="20,0,0,0"/>
+                    <TextBlock FontSize="36" x:Name="VersionLabel" FontWeight="Bold" RelativePanel.AlignTopWithPanel="True" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.Version}" TextWrapping="Wrap"/>
+                    <TextBlock FontSize="14" x:Name="ProductNameLabel" RelativePanel.Below="VersionLabel" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.ProductName}" TextWrapping="Wrap"/>
+                    <TextBlock FontSize="14" x:Name="Label" RelativePanel.Below="ProductNameLabel" Text="{Binding ElementName=buildPage, Path=CurrentBuild, Converter={StaticResource CodenameAndStageConverter}}" TextWrapping="Wrap" Margin="20,0,0,10"/>
 
 
                 </RelativePanel>
@@ -78,34 +78,38 @@
                 <RelativePanel Grid.Row="1" Margin="20,20,20,0">
 
 
-                    <Grid x:Name="GalleryGrid">
-                        <TextBlock Style="{ThemeResource BaseTextBlockStyle}" >Gallery</TextBlock>
+                    <Grid x:Name="GalleryGrid" Margin="0,5,0,5">
+                        <StackPanel >
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}">图库</TextBlock>
+                            <TextBlock >暂无图片</TextBlock>
+                        </StackPanel>
+                        
                     </Grid>
 
                     <StackPanel x:Name="InformationPanel" Width="300">
-                        <StackPanel x:Name="BuildTagGrid"  Margin="0,0,0,5">
-                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,0">Buildtag</TextBlock>
+                        <StackPanel x:Name="BuildTagGrid"  Margin="0,5,0,5">
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,0">版本字符串</TextBlock>
                             <TextBlock Text="{Binding ElementName=buildPage, Path=CurrentBuild.Buildtag}" />
                         </StackPanel>
                         <StackPanel x:Name="ArchGrid"  Margin="0,5,0,5">
-                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,0">Architecture</TextBlock>
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,0">架构</TextBlock>
                             <TextBlock Text="{Binding ElementName=buildPage, Path=CurrentBuild.Architecture}"/>
                         </StackPanel>
                         <StackPanel x:Name="SKUGrid" Margin="0,5,0,5">
-                            <TextBlock x:Name="SKULabel" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">SKU</TextBlock>
+                            <TextBlock x:Name="SKULabel" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">版本</TextBlock>
                             <TextBlock MaxLines="7" x:Name="SKUText"
                                        Text="{Binding ElementName=buildPage, Path=CurrentBuild.SKU, Converter={StaticResource MultiLineConverter}}"/>
-                            <Button x:Name="SKUMoreButton" Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5" Click="More_Click">More</Button>
+                            <Button x:Name="SKUMoreButton" Style="{StaticResource TextBlockButtonStyle}" Visibility="{Binding ElementName=SKUText, Path=Text, Converter={StaticResource MoreButtonVisibilityConverter}}" Padding="0,5,0,5" Click="More_Click">查看更多...</Button>
                         </StackPanel>
                         <StackPanel x:Name="LanguageGrid"  Margin="0,5,0,5">
-                            <TextBlock x:Name="LanguageLabel" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">Language</TextBlock>
+                            <TextBlock x:Name="LanguageLabel" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">语言</TextBlock>
                             <TextBlock MaxLines="5" x:Name="LanguageText"
                                        Text="{Binding ElementName=buildPage, Path=CurrentBuild.Language, Converter={StaticResource MultiLineConverterForLanguage}}"/>
-                            <Button x:Name="LanguageMoreButton" Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5" Click="More_Click" >More</Button>
+                            <Button x:Name="LanguageMoreButton" Style="{StaticResource TextBlockButtonStyle}" Visibility="{Binding ElementName=LanguageText, Path=Text, Converter={StaticResource MoreButtonVisibilityConverter}}" Padding="0,5,0,5" Click="More_Click" >查看更多...</Button>
                         </StackPanel>
                         <StackPanel x:Name="DetailsGrid"  Margin="0,5,0,5">
-                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">Installation Information</TextBlock>
-                            <Button Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5">Click to see more details...</Button>
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">安装信息</TextBlock>
+                            <Button Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5" Click="InstallInformation_Click" >点击查看...</Button>
                         </StackPanel>
                     </StackPanel>
                 </RelativePanel>
@@ -115,41 +119,60 @@
             </Grid>
         </ScrollViewer>
 
-        <ContentDialog x:Name="DetailDialog" Style="{StaticResource ContentDialogStyle1}" Opened="DetailDialog_Opened" Closed="DetailDialog_Closed">
+        <ContentDialog x:Name="DetailDialog" MaxWidth="350" Style="{StaticResource ContentDialogStyle1}" Opened="DetailDialog_Opened" Closed="DetailDialog_Closed">
             <ContentDialog.Content >
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="48"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <AppBarButton Width="48" HorizontalAlignment="Right" Click="AppBarButton_Click" Icon="Cancel"/>
+                    <AppBarButton x:Name="DetailDialogCloseButton" Width="48" HorizontalAlignment="Right" Click="AppBarButton_Click" Icon="Cancel"/>
 
-                    <Grid Grid.Row="1" Margin="20,0,20,0">
-                        <Grid.RowDefinitions >
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock x:Name="DetailDialogHeaderBlock" Style="{ThemeResource FlyoutPickerTitleTextBlockStyle}" Grid.Row="0"/>
-                        <TextBlock x:Name="DetailDialogTextBlock" Grid.Row="1" IsTextSelectionEnabled="True" TextWrapping="Wrap"/>
-                    </Grid>
-                    
-                    <!--TextBox x:Name="DetailDialogTextBox" Grid.Row="1" BorderThickness="0" 
-                         IsReadOnly="True" Background="Transparent" Padding="0" 
-                         Margin="20,0,20,0" Style="{StaticResource TextBoxStyle1}"
-                         TextWrapping="Wrap"/-->
+                    <ScrollViewer Grid.Row="1"  HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                        <Grid Margin="20,0,20,0">
+                            <Grid.RowDefinitions >
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock x:Name="DetailDialogHeaderBlock" Style="{ThemeResource BaseTextBlockStyle}" Grid.Row="0"/>
+                            <TextBlock x:Name="DetailDialogTextBlock" Grid.Row="1" IsTextSelectionEnabled="True" TextWrapping="Wrap"/>
+                        </Grid>
+                    </ScrollViewer>
                 </Grid>
             </ContentDialog.Content>
         </ContentDialog>
 
-        <ContentDialog x:Name="InstallationDialog" Style="{StaticResource ContentDialogStyle1}" Opened="DetailDialog_Opened" Closed="DetailDialog_Closed">
+        <ContentDialog x:Name="InstallationDialog" MaxWidth="350" Style="{StaticResource ContentDialogStyle1}" Opened="DetailDialog_Opened" Closed="DetailDialog_Closed">
             <ContentDialog.Content >
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="48"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <AppBarButton Width="48" HorizontalAlignment="Right" Click="AppBarButton_Click" Icon="Cancel"/>
-                    
+                    <AppBarButton x:Name="InstallationDialogCloseButton" Width="48" HorizontalAlignment="Right" Click="AppBarButton_Click" Icon="Cancel"/>
+
+                    <ScrollViewer  Grid.Row="1"  HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="20,0,20,0">
+
+                            <StackPanel Margin="0,5,0,5">
+                                <TextBlock Text="BIOS 日期" Style="{ThemeResource BaseTextBlockStyle}" Grid.Row="0"/>
+                                <TextBlock x:Name="BIOSDateTextBlock" Text="{Binding ElementName=buildPage, Path=CurrentBuild.BIOSDate}" Grid.Row="1" IsTextSelectionEnabled="True" TextWrapping="Wrap"/>
+                                <Button x:Name="ExportButton" Visibility="Collapsed" Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5">导出到 VMGuide...</Button>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,5,0,5">
+                                <TextBlock Text="产品密钥" Style="{ThemeResource BaseTextBlockStyle}" Grid.Row="0"/>
+                                <TextBlock x:Name="SerialTextBlock" Text="{Binding ElementName=buildPage, Path=CurrentBuild.SerialNumber, Converter={StaticResource MultiLineConverterForProductKey}}" Grid.Row="1" IsTextSelectionEnabled="True" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,5,0,5">
+                                <TextBlock Text="注意事项" Style="{ThemeResource BaseTextBlockStyle}" Grid.Row="0"/>
+                                <TextBlock x:Name="FixesTextBlock" Text="{Binding ElementName=buildPage, Path=CurrentBuild.Fixes}" Grid.Row="1" IsTextSelectionEnabled="True" TextWrapping="Wrap"/>
+
+                            </StackPanel>
+                   
+                        </StackPanel>
+                    </ScrollViewer>
                 </Grid>
             </ContentDialog.Content>
         </ContentDialog>

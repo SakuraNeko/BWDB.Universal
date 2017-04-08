@@ -5,7 +5,11 @@
     xmlns:local="using:BWDB.Universal" RequestedTheme="Light">
     <Application.Resources>
         <ResourceDictionary>
-            <SolidColorBrush x:Key="BackgroundAccentBrush" Color="#FF184689" />
+            <Color x:Key="BWDB_AccentColor">#FF184689</Color>
+            <Color x:Key="BWDB_MediumAccentColor">#D0184689</Color>
+            
+            <SolidColorBrush x:Key="BWDB_AccentBrush" Color="{StaticResource BWDB_AccentColor}" />
+            <SolidColorBrush x:Key="BWDB_MediumAccentBrush" Color="{StaticResource BWDB_MediumAccentColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles.xaml"/>
                 <ResourceDictionary Source="Converters.xaml"/>

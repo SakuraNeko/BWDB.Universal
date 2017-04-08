@@ -10,6 +10,7 @@ namespace BWDB.Core
 {
     public class Build
     {
+        public int ProductID { get; set; }
         public int BuildID { get; set; }
         public string Stage { get; set; }
         public string ProductName { get; set; }
@@ -20,6 +21,8 @@ namespace BWDB.Core
         public string Language { get; set; }
         public string SKU { get; set; }
         public string SerialNumber { get; set; }
+        public string Fixes { get; set;}
+        public string BIOSDate { get; set; }
     }
     /*
     public class Build : INotifyPropertyChanged

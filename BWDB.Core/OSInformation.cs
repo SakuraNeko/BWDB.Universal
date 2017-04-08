@@ -38,12 +38,12 @@ namespace BWDB.Core
             return data;
         }
 
-        public List<Build> GetBuildsInProduct(int ProductID)
+        public List<Build> GetBuilds(int ProductID)
         {
             var dbConnection = new SQLiteConnection(dbFileName);
 
       
-            object[] args = { ProductID};
+            object[] args = { ProductID };
 
             var query = dbConnection.Query<Build>(
                 "SELECT * FROM BuildList " +
@@ -55,6 +55,31 @@ namespace BWDB.Core
             return query;
             
         }
+
+        public List<Build> GetBuilds (string Keyword)
+        {
+            var dbConnection = new SQLiteConnection(dbFileName);
+            if (dbConnection == null) throw new Exception();
+
+            object[] args = { Keyword };
+
+            List<Build> query = new List<Build>();
+
+            var command = dbConnection.CreateCommand(
+                 "SELECT * FROM BuildList " +
+                "JOIN ProductList ON BuildList.ProductID = ProductList.ProductID WHERE " +
+                "Buildtag LIKE @keyword OR Version LIKE @keyword"
+                );
+
+            command.Bind("@keyword", $"%{Keyword}%");
+
+            query = command.ExecuteQuery<Build>();
+
+            dbConnection.Dispose();
+
+            return query;
+        }
+
         public List<Product> GetProducts()
         {
             var dbConnection = new SQLiteConnection(dbFileName);

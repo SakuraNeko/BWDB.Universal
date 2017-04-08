@@ -49,12 +49,12 @@ namespace BWDB.Universal
             var HeaderBinding = new Binding();
             var ContentBinding = new Binding();
 
-            if (Equals(sender, SKUMoreButton))
+            if (sender == SKUMoreButton)
             {
                 HeaderBinding.Source = SKULabel;
                 ContentBinding.Source = SKUText;
             }
-            else if (Equals(sender, LanguageMoreButton))
+            else if (sender == LanguageMoreButton)
             {
                 HeaderBinding.Source = LanguageLabel;
                 ContentBinding.Source = LanguageText;
@@ -100,9 +100,20 @@ namespace BWDB.Universal
 
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            DetailDialog.Hide();
+            if (sender == DetailDialogCloseButton )
+            {
+                DetailDialog.Hide();
+            }
+            else
+            {
+                InstallationDialog.Hide();
+            }
+           
         }
 
-
+        private async void InstallInformation_Click(object sender, RoutedEventArgs e)
+        {
+            await InstallationDialog.ShowAsync();
+        }
     }
 }

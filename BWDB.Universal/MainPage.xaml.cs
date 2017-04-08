@@ -20,7 +20,6 @@ using Windows.Storage;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.Foundation.Metadata;
-using Microsoft.Graphics.Canvas.Effects;
 using Windows.System.Profile;
 using BWDB.Core;
 
@@ -50,7 +49,7 @@ namespace BWDB.Universal
         {
             var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
 
-            var BackgroundColor = ((SolidColorBrush)Application.Current.Resources["BackgroundAccentBrush"]).Color;
+            var BackgroundColor = ((Color)Application.Current.Resources["BWDB_AccentColor"]);
 
             //设置标题栏
             var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
@@ -185,7 +184,7 @@ namespace BWDB.Universal
             
         }
         
-
+        /*
         private void Main_FocusEngaged(Control sender, FocusEngagedEventArgs args)
         {
             var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
@@ -209,12 +208,28 @@ namespace BWDB.Universal
                 topSprite.Size = size;
             }
         }
-        
+        */
+
         //获取BuildList
         public void GetBuildList(int ProductID)
         {
-            var Builds = App.OSInformation.GetBuildsInProduct(ProductID);
+            var Builds = App.OSInformation.GetBuilds(ProductID);
             var groupedBuilds = Builds.OrderBy(p => p.BuildID).GroupBy(p => p.Stage);
+
+            var CollectionViewSource = new CollectionViewSource();
+            CollectionViewSource.Source = groupedBuilds;
+            CollectionViewSource.IsSourceGrouped = true;
+
+            BuildZoomInListView.ItemsSource = CollectionViewSource.View;
+            BuildZoomOutListView.ItemsSource = CollectionViewSource.View.CollectionGroups;
+
+            BuildZoomInListView.SelectedItem = null;
+        }
+
+        public void GetBuildList(string Keyword)
+        {
+            var Builds = App.OSInformation.GetBuilds(Keyword);
+            var groupedBuilds = Builds.OrderBy(p => p.ProductID).ThenBy(p=>p.BuildID).GroupBy(p => p.ProductName);
 
             var CollectionViewSource = new CollectionViewSource();
             CollectionViewSource.Source = groupedBuilds;
@@ -316,6 +331,31 @@ namespace BWDB.Universal
             }
 
         }
+        
+        private void SearchToggle_Checked(object sender, RoutedEventArgs e)
+        {
+            SearchBox.Focus(FocusState.Keyboard);
+        }
 
+        private void SearchToggle_Unchecked(object sender, RoutedEventArgs e)
+        {
+            GetBuildList(currentProduct.Product.ProductID);
+            SearchBox.Text = "";
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (SearchToggle.IsChecked == false) return;
+
+            if (SearchBox.Text != "")
+            {
+                GetBuildList(SearchBox.Text);
+            }
+            else
+            {
+                BuildZoomInListView.ItemsSource = null;
+                BuildZoomOutListView.ItemsSource = null;
+            }
+        }
     }
 }
