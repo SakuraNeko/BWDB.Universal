@@ -68,8 +68,8 @@ namespace BWDB.Universal
             HeaderBinding.Path = new PropertyPath("Text");
             ContentBinding.Path = new PropertyPath("Text");
 
-            DetailDialogTextBox.SetBinding(TextBox.HeaderProperty, HeaderBinding);
-            DetailDialogTextBox.SetBinding(TextBox.TextProperty, ContentBinding);
+            DetailDialogHeaderBlock.SetBinding(TextBlock.TextProperty, HeaderBinding);
+            DetailDialogTextBlock.SetBinding(TextBlock.TextProperty, ContentBinding);
 
             await DetailDialog.ShowAsync();
         }

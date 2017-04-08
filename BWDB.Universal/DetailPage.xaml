@@ -7,7 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources >
 
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <VisualStateManager.VisualStateGroups>
@@ -24,6 +26,7 @@
                         <Setter Target="GalleryGrid.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
                         <Setter Target="GalleryGrid.(RelativePanel.AlignTopWithPanel)" Value="True"/>
                         <Setter Target="GalleryGrid.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="InformationPanel.Width" Value="Auto"/>
                         <Setter Target="InformationPanel.(RelativePanel.Below)" Value="GalleryGrid"/>
                         <Setter Target="InformationPanel.(RelativePanel.AlignRightWithPanel)" Value="True"/>
                         <Setter Target="InformationPanel.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
@@ -59,7 +62,9 @@
                 <RelativePanel Grid.Row="0">
 
                     <Grid x:Name="HeroImageTile" Width="150" Height="150" Margin="20,20,0,0" Background="{StaticResource BackgroundAccentBrush}">
-                        <TextBlock  ></TextBlock>
+                        <FontIcon FontFamily="Get Started MDL2 Assets" Glyph="&#xE782;" Foreground="White" FontSize="80" Width="150" Height="150"/>
+                        <FontIcon FontFamily="Marlett" Glyph="&#xF057;" Foreground="White" FontSize="120" Margin="0,-38,0,0" Width="150" Height="150"/>
+                        <FontIcon FontFamily="Wingdings" Glyph="&#xF0FF;" Foreground="White" FontSize="96" Width="150" Height="150"/>
                     </Grid>
 
                     <TextBlock FontSize="36" x:Name="VersionLabel" FontWeight="Bold" RelativePanel.RightOf="HeroImageTile" RelativePanel.AlignTopWithPanel="True" Margin="20,10,0,0" Text="{Binding ElementName=buildPage, Path=CurrentBuild.Version}" TextWrapping="Wrap"/>
@@ -74,34 +79,32 @@
 
 
                     <Grid x:Name="GalleryGrid">
-                        <TextBlock FontSize="14" FontWeight="Bold" >Gallery</TextBlock>
+                        <TextBlock Style="{ThemeResource BaseTextBlockStyle}" >Gallery</TextBlock>
                     </Grid>
 
-                    <StackPanel x:Name="InformationPanel">
+                    <StackPanel x:Name="InformationPanel" Width="300">
                         <StackPanel x:Name="BuildTagGrid"  Margin="0,0,0,5">
-                            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,0,0,0">Buildtag</TextBlock>
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,0">Buildtag</TextBlock>
                             <TextBlock Text="{Binding ElementName=buildPage, Path=CurrentBuild.Buildtag}" />
                         </StackPanel>
                         <StackPanel x:Name="ArchGrid"  Margin="0,5,0,5">
-                            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,0,0,0">Architecture</TextBlock>
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,0">Architecture</TextBlock>
                             <TextBlock Text="{Binding ElementName=buildPage, Path=CurrentBuild.Architecture}"/>
                         </StackPanel>
                         <StackPanel x:Name="SKUGrid" Margin="0,5,0,5">
-                            <TextBlock x:Name="SKULabel" FontSize="14" FontWeight="Bold" Margin="0,0,10,0">SKU</TextBlock>
+                            <TextBlock x:Name="SKULabel" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">SKU</TextBlock>
                             <TextBlock MaxLines="7" x:Name="SKUText"
                                        Text="{Binding ElementName=buildPage, Path=CurrentBuild.SKU, Converter={StaticResource MultiLineConverter}}"/>
                             <Button x:Name="SKUMoreButton" Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5" Click="More_Click">More</Button>
-
-
                         </StackPanel>
                         <StackPanel x:Name="LanguageGrid"  Margin="0,5,0,5">
-                            <TextBlock x:Name="LanguageLabel" FontSize="14" FontWeight="Bold" Margin="0,0,10,0">Language</TextBlock>
+                            <TextBlock x:Name="LanguageLabel" Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">Language</TextBlock>
                             <TextBlock MaxLines="5" x:Name="LanguageText"
                                        Text="{Binding ElementName=buildPage, Path=CurrentBuild.Language, Converter={StaticResource MultiLineConverterForLanguage}}"/>
                             <Button x:Name="LanguageMoreButton" Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5" Click="More_Click" >More</Button>
                         </StackPanel>
                         <StackPanel x:Name="DetailsGrid"  Margin="0,5,0,5">
-                            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,0,10,0">Installation Information</TextBlock>
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,10,0">Installation Information</TextBlock>
                             <Button Style="{StaticResource TextBlockButtonStyle}" Padding="0,5,0,5">Click to see more details...</Button>
                         </StackPanel>
                     </StackPanel>
@@ -112,15 +115,6 @@
             </Grid>
         </ScrollViewer>
 
-        <Grid Width="300" Height="auto" Margin="20" x:Name="DetailGrid" Background="{ThemeResource AppBarBackground}" BorderBrush="{ThemeResource AppBarButtonForeground}" BorderThickness="1" Visibility="Collapsed">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="48"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <AppBarButton Icon="Cancel" IsCompact="True" Width="48" HorizontalAlignment="Right"/>
-            <Frame x:Name="DetailFrame" Grid.Row="1"></Frame>
-        </Grid>
-
         <ContentDialog x:Name="DetailDialog" Style="{StaticResource ContentDialogStyle1}" Opened="DetailDialog_Opened" Closed="DetailDialog_Closed">
             <ContentDialog.Content >
                 <Grid>
@@ -129,14 +123,36 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <AppBarButton Width="48" HorizontalAlignment="Right" Click="AppBarButton_Click" Icon="Cancel"/>
-                    <TextBox x:Name="DetailDialogTextBox" Grid.Row="1" BorderThickness="0" 
+
+                    <Grid Grid.Row="1" Margin="20,0,20,0">
+                        <Grid.RowDefinitions >
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="DetailDialogHeaderBlock" Style="{ThemeResource FlyoutPickerTitleTextBlockStyle}" Grid.Row="0"/>
+                        <TextBlock x:Name="DetailDialogTextBlock" Grid.Row="1" IsTextSelectionEnabled="True" TextWrapping="Wrap"/>
+                    </Grid>
+                    
+                    <!--TextBox x:Name="DetailDialogTextBox" Grid.Row="1" BorderThickness="0" 
                          IsReadOnly="True" Background="Transparent" Padding="0" 
                          Margin="20,0,20,0" Style="{StaticResource TextBoxStyle1}"
-                         TextWrapping="Wrap"/>
+                         TextWrapping="Wrap"/-->
                 </Grid>
             </ContentDialog.Content>
         </ContentDialog>
 
+        <ContentDialog x:Name="InstallationDialog" Style="{StaticResource ContentDialogStyle1}" Opened="DetailDialog_Opened" Closed="DetailDialog_Closed">
+            <ContentDialog.Content >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <AppBarButton Width="48" HorizontalAlignment="Right" Click="AppBarButton_Click" Icon="Cancel"/>
+                    
+                </Grid>
+            </ContentDialog.Content>
+        </ContentDialog>
     </Grid>
 
 
