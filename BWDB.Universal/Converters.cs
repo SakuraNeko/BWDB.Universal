@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Graphics.Display;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace BWDB.Universal
 {
@@ -76,12 +78,12 @@ namespace BWDB.Universal
         public object Convert (object value, Type targetType, object parameter, string language)
         {
             var ret = "";
-            if (value is string)
+            if (value != null)
             {
                 char[] c = { '.' };
                 var str = value.ToString();
                 var split = str.Split(c);
-                if (split.Count()>=6)
+                if (split.Count() >= 6)
                 {
                     ret = split[4];
                 }
@@ -99,23 +101,18 @@ namespace BWDB.Universal
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var ret = "";
-            if (value is string)
+            var ret = value as string;
+            if (ret != null)
             {
                 char[] c = { ' ' };
-                var str = value.ToString();
-                var split = str.Split(c);
-                if (split.Count() >= 1)
+                var split = ret.Split(c);
+                if (split.Count() > 1)
                 {
                     char[] c1 = { '.' };
                     var split1 = split[0].Split(c1);
-                    if (split1.Count() == 4)
+                    if (split1.Count() == 4 && !split[1].StartsWith("("))
                     {
                         ret = split[0];
-                    }
-                    else
-                    {
-                        ret = str;
                     }
                 }
             }
@@ -132,16 +129,16 @@ namespace BWDB.Universal
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            ElementTheme theme;
+            ElementTheme theme = ElementTheme.Light;
 
-            if((bool)value)
+            if (value != null)
             {
-                theme = ElementTheme.Light;
+                if (!(bool)value)
+                {
+                    theme = ElementTheme.Dark;
+                }
             }
-            else
-            {
-                theme = ElementTheme.Dark;
-            }
+
 
             return theme;
         }
@@ -237,6 +234,90 @@ namespace BWDB.Universal
                 if (a) ret = Visibility.Collapsed;
             }
 
+            return ret;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class VisibilityReverseConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var ret = Visibility.Collapsed;
+            if (value != null)
+            {
+                if ((Visibility)value == Visibility.Collapsed) ret = Visibility.Visible;
+            }
+
+            return ret;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BooleanReverseConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null) return false;
+            return (!(bool)value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            
+
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ImageWidthRawPixelConverter : IValueConverter
+    {
+        
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var scale = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+
+            var image = value as BitmapImage;
+            double ret = double.NaN;
+            if (image != null)
+            {
+                ret = image.PixelWidth / scale;
+
+            }
+            return ret;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ImageHeightRawPixelConverter : IValueConverter
+    {
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            //if (DetailPage.CurrentPage == null) return double.NaN;
+
+            //var parentHeight = DetailPage.CurrentPage.ScreenshotGrid.ActualHeight - 48 - 5;
+            var scale = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+
+            var image = value as BitmapImage;
+            double ret = double.NaN;
+            if (image != null)
+            {
+                    ret = image.PixelHeight / scale;
+                
+            }
             return ret;
         }
 

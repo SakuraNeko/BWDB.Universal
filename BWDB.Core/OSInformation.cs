@@ -41,14 +41,11 @@ namespace BWDB.Core
         public List<Build> GetBuilds(int ProductID)
         {
             var dbConnection = new SQLiteConnection(dbFileName);
-
-      
-            object[] args = { ProductID };
-
+            
             var query = dbConnection.Query<Build>(
                 "SELECT * FROM BuildList " +
                 "JOIN ProductList ON BuildList.ProductID = ProductList.ProductID " +
-                 "WHERE BuildList.ProductID = ?", args);
+                 "WHERE BuildList.ProductID = ?", ProductID);
 
             dbConnection.Dispose();
 
@@ -60,9 +57,7 @@ namespace BWDB.Core
         {
             var dbConnection = new SQLiteConnection(dbFileName);
             if (dbConnection == null) throw new Exception();
-
-            object[] args = { Keyword };
-
+            
             List<Build> query = new List<Build>();
 
             var command = dbConnection.CreateCommand(

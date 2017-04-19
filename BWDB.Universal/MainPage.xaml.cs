@@ -36,8 +36,8 @@ namespace BWDB.Universal
         Compositor compositor;
         SpriteVisual topSprite;
 
-        static ObservableProduct currentProduct = new ObservableProduct();
-        public static ObservableProduct CurrentProduct { get => currentProduct; set => currentProduct = value; }
+        static NotifyChanged<Product> currentProduct = new NotifyChanged<Product>();
+        public static NotifyChanged<Product> CurrentProduct { get => currentProduct; set => currentProduct = value; }
 
         public MainPage()
         {
@@ -120,6 +120,13 @@ namespace BWDB.Universal
 
             var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
 
+            if (ExternalFrame.Visibility == Visibility.Visible)
+            {
+                ExternalFrame.Visibility = Visibility.Collapsed;
+                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                e.Handled = true;
+            }
+
             if (MainPageFrame.Visibility == Visibility.Visible)
             {
                 MainPageFrame.Visibility = Visibility.Collapsed;
@@ -129,7 +136,7 @@ namespace BWDB.Universal
                 e.Handled = true;
             }
 
-            if (isPhoneUI)
+            if (isPhoneUI && LeftPageFrame.Visibility == Visibility.Visible)
             {
                 appTitleBar.ButtonForegroundColor = Colors.White;
             }
@@ -144,25 +151,36 @@ namespace BWDB.Universal
             var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
             var isMainPageVisible = (MainPageFrame.Visibility == Visibility.Visible);
 
-            if (isPhoneUI && isMainPageVisible)
-            {
-                LeftPageFrame.Visibility = Visibility.Collapsed;
-                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            }
-            else
-            {
-                LeftPageFrame.Visibility = Visibility.Visible;
-                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            }
+            var isExternalFrameVisible = (ExternalFrame.Visibility == Visibility.Visible);
 
-            if (isPhoneUI && !isMainPageVisible)
+            if (!isExternalFrameVisible)
             {
-                appTitleBar.ButtonForegroundColor = Colors.White;
+                if (isPhoneUI && isMainPageVisible)
+                {
+                    LeftPageFrame.Visibility = Visibility.Collapsed;
+                    navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                }
+                else
+                {
+                    LeftPageFrame.Visibility = Visibility.Visible;
+                    navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                }
+
+                if (isPhoneUI && !isMainPageVisible)
+                {
+                    appTitleBar.ButtonForegroundColor = Colors.White;
+                }
+                else
+                {
+                    appTitleBar.ButtonForegroundColor = Colors.Black;
+                }
             }
             else
             {
+                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 appTitleBar.ButtonForegroundColor = Colors.Black;
             }
+
 
             if (topSprite !=null)
             {
@@ -216,10 +234,11 @@ namespace BWDB.Universal
             var Builds = App.OSInformation.GetBuilds(ProductID);
             var groupedBuilds = Builds.OrderBy(p => p.BuildID).GroupBy(p => p.Stage);
 
-            var CollectionViewSource = new CollectionViewSource();
-            CollectionViewSource.Source = groupedBuilds;
-            CollectionViewSource.IsSourceGrouped = true;
-
+            var CollectionViewSource = new CollectionViewSource()
+            {
+                Source = groupedBuilds,
+                IsSourceGrouped = true
+            };
             BuildZoomInListView.ItemsSource = CollectionViewSource.View;
             BuildZoomOutListView.ItemsSource = CollectionViewSource.View.CollectionGroups;
 
@@ -231,10 +250,11 @@ namespace BWDB.Universal
             var Builds = App.OSInformation.GetBuilds(Keyword);
             var groupedBuilds = Builds.OrderBy(p => p.ProductID).ThenBy(p=>p.BuildID).GroupBy(p => p.ProductName);
 
-            var CollectionViewSource = new CollectionViewSource();
-            CollectionViewSource.Source = groupedBuilds;
-            CollectionViewSource.IsSourceGrouped = true;
-
+            var CollectionViewSource = new CollectionViewSource()
+            {
+                Source = groupedBuilds,
+                IsSourceGrouped = true
+            };
             BuildZoomInListView.ItemsSource = CollectionViewSource.View;
             BuildZoomOutListView.ItemsSource = CollectionViewSource.View.CollectionGroups;
 
@@ -287,11 +307,11 @@ namespace BWDB.Universal
 
         private void ProductZoomInListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CurrentProduct.Product = ProductZoomInListView.SelectedItem as Product;
+            CurrentProduct.Item = ProductZoomInListView.SelectedItem as Product;
 
-            if (CurrentProduct.Product != null)
+            if (CurrentProduct.Item != null)
             {
-                GetBuildList(CurrentProduct.Product.ProductID);
+                GetBuildList(CurrentProduct.Item.ProductID);
 
                 var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
                 if (!isPhoneUI && BuildZoomInListView.Items.Count > 0)
@@ -339,7 +359,7 @@ namespace BWDB.Universal
 
         private void SearchToggle_Unchecked(object sender, RoutedEventArgs e)
         {
-            GetBuildList(currentProduct.Product.ProductID);
+            GetBuildList(currentProduct.Item.ProductID);
             SearchBox.Text = "";
         }
 
@@ -356,6 +376,22 @@ namespace BWDB.Universal
                 BuildZoomInListView.ItemsSource = null;
                 BuildZoomOutListView.ItemsSource = null;
             }
+        }
+
+        private void SplitView_PaneClosed(SplitView sender, object args)
+        {
+            Appbar.IsOpen = false;
+        }
+
+        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            var navigationView = SystemNavigationManager.GetForCurrentView();
+
+            SplitView.IsPaneOpen = false;
+            ExternalFrame.Visibility = Visibility.Visible;
+            ExternalFrame.Navigate(typeof(SettingPage));
+
+            navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
     }
 }

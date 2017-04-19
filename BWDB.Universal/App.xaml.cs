@@ -30,7 +30,8 @@ namespace BWDB.Universal
         public static string localDB = Path.Combine(dbFolder.Path, dbFileName);
         public static Uri embeddedDB = new Uri("ms-appx:///Assets/" + dbFileName);
         public static OSInformation OSInformation;
-        
+        public static StorageFolder ScreenshotFolder;
+
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
         /// 已执行，逻辑上等同于 main() 或 WinMain()。
@@ -58,6 +59,22 @@ namespace BWDB.Universal
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
+
+                //获取本地截图缓存路径
+                var Settings = ApplicationData.Current.LocalSettings;
+                var futureAccessList = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList;
+                var token = (string)Settings.Values["ScreenshotFolderToken"];
+                
+
+                if (token != null && futureAccessList.ContainsItem(token))
+                {
+                    ScreenshotFolder = await futureAccessList.GetFolderAsync(token);
+                }
+                else
+                {
+                    ScreenshotFolder = dbFolder;
+                }
+                
 
                 //当LocalCache不存在数据库时，从appx中复制
                 //if (!File.Exists(localDB))
@@ -87,7 +104,7 @@ namespace BWDB.Universal
                 if (rootFrame.Content == null)
                 {
                     // 当导航堆栈尚未还原时，导航到第一页，
-                    // 并通过将所需信息作为导航参数传入来配置
+                    // 并通过将所需信息作为导航参数传入来配置d
                     // 参数
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }

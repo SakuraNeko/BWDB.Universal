@@ -335,7 +335,7 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="MaxHeight" Value="{ThemeResource ContentDialogMaxHeight}" />
+ 
         <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />
         <Setter Property="MaxWidth" Value="{ThemeResource ContentDialogMaxWidth}" />
         <Setter Property="MinWidth" Value="{ThemeResource ContentDialogMinWidth}" />
@@ -368,8 +368,8 @@
                                         HorizontalScrollBarVisibility="Disabled"
                                         VerticalScrollBarVisibility="Disabled"
                                         ZoomMode="Disabled"
-                                        Margin="{ThemeResource ContentDialogContentScrollViewerMargin}"
-                                        IsTabStop="False">
+                                        Margin="0"
+                                        IsTabStop="False" Grid.Row="0" Grid.RowSpan="2">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
