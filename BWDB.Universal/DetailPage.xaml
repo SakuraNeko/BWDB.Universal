@@ -80,19 +80,23 @@
                             <GridView x:Name="ScreenshotView" SelectionMode="None" IsItemClickEnabled="True" ItemClick="ScreenshotView_ItemClick" >
                                 <GridView.ItemTemplate>
                                     <DataTemplate>
-                                        <Image x:Name="image" Source="{Binding Thumbnail}" Loaded="Image_Loaded"  />
+                                        <Grid>
+                                            <Image x:Name="image" Source="{Binding Thumbnail}" Loaded="Image_Loaded" Stretch="UniformToFill" HorizontalAlignment="Center"/>
+                                        </Grid>
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
                                 <GridView.ItemContainerStyle >
                                     <Style TargetType="GridViewItem">
                                         <Setter Property="Margin" Value="0,5,5,5"/>
+                                        <Setter Property="MaxWidth" Value="150"/>
+                                        <Setter Property="MaxHeight" Value="115"/>
                                     </Style>
                                 </GridView.ItemContainerStyle>
-                                <GridView.ItemsPanel >
+                                <!--GridView.ItemsPanel >
                                     <ItemsPanelTemplate>
-                                        <VariableSizedWrapGrid Orientation="Horizontal" ItemWidth="1" ItemHeight="130"/>
+                                        <VariableSizedWrapGrid Orientation="Horizontal" ItemWidth="130" ItemHeight="1"/>
                                     </ItemsPanelTemplate>
-                                </GridView.ItemsPanel>
+                                </-->
                             </GridView>
                         </StackPanel>
                     </Grid>

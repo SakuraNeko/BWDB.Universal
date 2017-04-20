@@ -150,18 +150,18 @@ namespace BWDB.Universal
         }
 
         private void Image_Loaded(object sender, RoutedEventArgs e)
-        {
+        {/*
             var image = sender as Image;
             var bitmap = image.Source as BitmapImage;
             var view = VisualTreeHelper.GetParent(image);
 
             if (VisualTreeHelper.GetParent(view) is GridViewItem gridViewItem)
             {
-                int width = (int)((120.0f / bitmap.PixelHeight) * bitmap.PixelWidth);
+                int height = (int)((120.0f / bitmap.PixelWidth) * bitmap.PixelHeight);
 
-                gridViewItem.Width = width;
-                gridViewItem.SetValue(VariableSizedWrapGrid.ColumnSpanProperty, width + 10);
-            }
+                gridViewItem.Height = height;
+                gridViewItem.SetValue(VariableSizedWrapGrid.RowSpanProperty, height + 10);
+            }*/
         }
 
         private void Image_SizeChanged(object sender, SizeChangedEventArgs e)
