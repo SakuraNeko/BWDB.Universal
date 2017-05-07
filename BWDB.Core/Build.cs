@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using Windows.Storage.AccessCache;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.Storage.Streams;
+using System.IO;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace BWDB.Core
 {
@@ -20,6 +24,12 @@ namespace BWDB.Core
         public BitmapImage Image { get; set; }
 
         public Screenshot() { }
+    }
+
+    public class ScreenshotJson
+    {
+        public string name { get; set; }
+        public string author { get; set; }
     }
 
     public class Build
@@ -41,14 +51,56 @@ namespace BWDB.Core
 
         public async Task<List<Screenshot>> GetSceenshots(StorageFolder screenshotFolder)
         {
-                System.Diagnostics.Debug.WriteLine(ScreenshotID);
+            var httpWebRequest = WebRequest.Create($"http://119.29.206.109:8088/screenshot/{ScreenshotID.ToString()}");
+            //httpWebRequest.ContentType = "application/json";
 
+            var response = await httpWebRequest.GetResponseAsync();
+            var httpStream = response.GetResponseStream();
+            var reader = new StreamReader(httpStream);
+
+            var webScreenshotList = JsonConvert.DeserializeObject<List<ScreenshotJson>>(await reader.ReadToEndAsync()).OrderBy(p => p.name);
+
+            var screenshotList = new List<Screenshot>();
+
+            foreach (var webScreen in webScreenshotList)
+            {
+
+                var screenRequest = WebRequest.Create($"http://119.29.206.109:8088/screenshot/{ScreenshotID.ToString()}/{webScreen.name}");
+                var screenResponse = await screenRequest.GetResponseAsync();
+                var screenResponseStream = screenResponse.GetResponseStream();
+
+                var stream = new InMemoryRandomAccessStream();
+                var outputStream = stream.GetOutputStreamAt(0);
+                await RandomAccessStream.CopyAsync(screenResponseStream.AsInputStream(), outputStream);
+
+
+                //var uri = new Uri($"http://119.29.206.109:8088/screenshot/{ScreenshotID.ToString()}/{webScreen.name}");
+                var thumbnail = new BitmapImage()
+                {
+                    
+                };
+                await thumbnail.SetSourceAsync(stream);
+                var image = new BitmapImage();
+                await thumbnail.SetSourceAsync(stream.CloneStream());
+
+                var screenshot = new Screenshot()
+                {
+                    Author = webScreen.author,
+                    Description = webScreen.name,
+                    Thumbnail = thumbnail,
+                    Image = thumbnail
+                };
+
+                screenshotList.Add(screenshot);
+            }
+            /*
+            //System.Diagnostics.Debug.WriteLine(await reader.ReadToEndAsync());
+           
                 StorageFolder folder;
                 IReadOnlyList<StorageFile> filesList;
                 try
                 {
                     folder = await screenshotFolder.GetFolderAsync(ScreenshotID.ToString());
-                    System.Diagnostics.Debug.WriteLine(folder.Path);
                     filesList = await folder.GetFilesAsync();
                 }
                 catch (Exception)
@@ -60,16 +112,24 @@ namespace BWDB.Core
 
             foreach (StorageFile file in filesList)
             {
+                
+                
+                var request = System.Net.HttpWebRequest.Create("https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png");
+                var response = await request.GetResponseAsync();
+                var ResponseStream = response.GetResponseStream();
+
+                var stream = new Windows.Storage.Streams.InMemoryRandomAccessStream();
+                var outputStream = stream.GetOutputStreamAt(0);
+                await RandomAccessStream.CopyAsync(ResponseStream.AsInputStream(), outputStream);
+                
                 var stream = await file.OpenReadAsync();
 
                 var thumbnail = new BitmapImage()
                 {
-                    DecodePixelHeight = 240,
-                    //DecodePixelType = DecodePixelType.Logical
+                    DecodePixelHeight = 150,
                 };
                 await thumbnail.SetSourceAsync(stream);
 
-                
                 var image = new BitmapImage();
                 await image.SetSourceAsync(stream.CloneStream());
 
@@ -81,66 +141,15 @@ namespace BWDB.Core
                     Image = image
                 };
 
-                //System.Diagnostics.Debug.WriteLine(screenshot.test);
                 screenshotList.Add(screenshot);
 
                 
                 }
-
+        */
            
                 return screenshotList;
             
         }
 
     }
-    /*
-    public class Build : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void Set<T>(ref T field, T value, [CallerMemberName] string caller = null)
-        {
-            if (!Equals(field, value))
-            {
-                field = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(caller));
-            }
-        }
-
-        string productName;
-        public string ProductName
-        {
-            get => productName;
-            set => Set(ref productName, value);
-        }
-
-        string codename;
-        public string Codename
-        {
-            get => codename;
-            set => Set(ref codename, value);
-        }
-
-        string version;
-        public string Version
-        {
-            get => version;
-            set => Set(ref version, value);
-        }
-
-        string buildtag;
-        public string Buildtag
-        {
-            get => buildtag;
-            set => Set(ref buildtag, value);
-        }
-
-        DateTime biosdate;
-        public DateTime BIOSDate
-        {
-            get => biosdate;
-            set => Set(ref biosdate, value);
-        }
-    }
-    */
 }

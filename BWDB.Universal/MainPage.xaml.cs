@@ -35,6 +35,7 @@ namespace BWDB.Universal
         public static MainPage CurrentPage;
         Compositor compositor;
         SpriteVisual topSprite;
+        Binding AdaptiveVisibilityBinding; //LeftFrame = !MainFrame
 
         static NotifyChanged<Product> currentProduct = new NotifyChanged<Product>();
         public static NotifyChanged<Product> CurrentProduct { get => currentProduct; set => currentProduct = value; }
@@ -47,9 +48,14 @@ namespace BWDB.Universal
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
+            
+            AdaptiveVisibilityBinding = new Binding();
+            AdaptiveVisibilityBinding.Source = MainPageFrame;
+            AdaptiveVisibilityBinding.Path = new PropertyPath("Visibility");
+            AdaptiveVisibilityBinding.Converter = new VisibilityReverseConverter();
+            AdaptiveVisibilityBinding.Mode = BindingMode.TwoWay;
 
-            var BackgroundColor = ((Color)Application.Current.Resources["BWDB_AccentColor"]);
+            var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
 
             //设置标题栏
             var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
@@ -64,7 +70,8 @@ namespace BWDB.Universal
             
             if (isPhoneUI)
             {
-                appTitleBar.ButtonForegroundColor = Colors.White;
+                LeftPageFrame.SetBinding(Frame.VisibilityProperty, AdaptiveVisibilityBinding);
+                appTitleBar.ButtonForegroundColor = ((Color)Application.Current.Resources["SystemChromeWhiteColor"]);
             }
 
             // 返回键事件
@@ -75,9 +82,9 @@ namespace BWDB.Universal
             {
                 //设置手机状态栏
                 var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = BackgroundColor;
-                statusBar.ForegroundColor = Colors.White;
-                statusBar.BackgroundOpacity = 0.9;
+                statusBar.BackgroundColor = ((Color)Application.Current.Resources["BWDB_AccentColor"]);
+                statusBar.ForegroundColor = ((Color)Application.Current.Resources["SystemChromeWhiteColor"]);
+                statusBar.BackgroundOpacity = 0.8;
             }
 
             //获取系统版本号
@@ -117,116 +124,80 @@ namespace BWDB.Universal
         {
             var navigationView = SystemNavigationManager.GetForCurrentView();
             var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
-
             var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
 
-            if (ExternalFrame.Visibility == Visibility.Visible)
-            {
-                ExternalFrame.Visibility = Visibility.Collapsed;
-                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                e.Handled = true;
-            }
-
-            if (MainPageFrame.Visibility == Visibility.Visible)
+            if (isPhoneUI && MainPageFrame.Visibility == Visibility.Visible)
             {
                 MainPageFrame.Visibility = Visibility.Collapsed;
-                LeftPageFrame.Visibility = Visibility.Visible;
 
                 navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
                 e.Handled = true;
+
+                appTitleBar.ButtonForegroundColor = ((Color)Application.Current.Resources["SystemChromeWhiteColor"]);
+            }
+        }
+
+        private void AdaptiveState_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+
+            var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+            var navigationView = SystemNavigationManager.GetForCurrentView();
+
+            if (e.NewState == PhoneUI)
+            {
+                LeftPageFrame.SetBinding(Frame.VisibilityProperty, AdaptiveVisibilityBinding);
+
+                var isLeftPageVisible = (LeftPageFrame.Visibility == Visibility.Visible);
+
+                if (isLeftPageVisible)
+                {
+                    appTitleBar.ButtonForegroundColor = ((Color)Application.Current.Resources["SystemChromeWhiteColor"]);
+                    navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                }
+                else
+                {
+                    appTitleBar.ButtonForegroundColor = ((Color)Application.Current.Resources["SystemBaseHighColor"]);
+                    navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                }
+                
+                
+            }
+            else if (e.NewState == DesktopUI)
+            {
+                LeftPageFrame.SetBinding(Frame.VisibilityProperty, new Binding());
+                if (MainPageFrame.SourcePageType != null)
+                {
+                    MainPageFrame.Visibility = Visibility.Visible;
+                }
+                appTitleBar.ButtonForegroundColor = ((Color)Application.Current.Resources["SystemBaseHighColor"]);
+                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             }
 
-            if (isPhoneUI && LeftPageFrame.Visibility == Visibility.Visible)
-            {
-                appTitleBar.ButtonForegroundColor = Colors.White;
-            }
-            
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var navigationView = SystemNavigationManager.GetForCurrentView();
-            var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
-
-            var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
-            var isMainPageVisible = (MainPageFrame.Visibility == Visibility.Visible);
-
-            var isExternalFrameVisible = (ExternalFrame.Visibility == Visibility.Visible);
-
-            if (!isExternalFrameVisible)
-            {
-                if (isPhoneUI && isMainPageVisible)
-                {
-                    LeftPageFrame.Visibility = Visibility.Collapsed;
-                    navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                }
-                else
-                {
-                    LeftPageFrame.Visibility = Visibility.Visible;
-                    navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                }
-
-                if (isPhoneUI && !isMainPageVisible)
-                {
-                    appTitleBar.ButtonForegroundColor = Colors.White;
-                }
-                else
-                {
-                    appTitleBar.ButtonForegroundColor = Colors.Black;
-                }
-            }
-            else
-            {
-                navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                appTitleBar.ButtonForegroundColor = Colors.Black;
-            }
-
-
             if (topSprite !=null)
-            {
-                var size = topSprite.Size;
-
-                if (isPhoneUI)
-                {
-                    size.X = 0f;
-                    size.Y = 0f;
-                }
-                else
-                {
-                    size.X = (float)PanelGrid.ActualWidth;
-                    size.Y = (float)PanelGrid.ActualHeight;
-                }
-
-                topSprite.Size = size;
-            }
-            
-        }
-        
-        /*
-        private void Main_FocusEngaged(Control sender, FocusEngagedEventArgs args)
-        {
-            var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
-            
-            if (topSprite != null && !isPhoneUI)
             {
                 var size = topSprite.Size;
                 size.X = (float)PanelGrid.ActualWidth;
                 size.Y = (float)PanelGrid.ActualHeight;
                 topSprite.Size = size;
             }
+
+            System.Diagnostics.Debug.WriteLine("a");
         }
 
-        private void Main_FocusDisengaged(Control sender, FocusDisengagedEventArgs args)
+
+        private async void SettingButton_Click(object sender, RoutedEventArgs e)
         {
-            if (topSprite != null)
-            {
-                var size = topSprite.Size;
-                size.X = 0f;
-                size.Y = 0f;
-                topSprite.Size = size;
-            }
+            SplitView.IsPaneOpen = false;
+            SettingDialog.Focus(FocusState.Programmatic);
+            SettingFrame.BackStack.Clear();
+            SettingFrame.Navigate(typeof(SettingPage));
+            await SettingDialog.ShowAsync();
         }
-        */
+
 
         //获取BuildList
         public void GetBuildList(int ProductID)
@@ -330,6 +301,7 @@ namespace BWDB.Universal
             var Build = e.ClickedItem as Build;
             NavigateToBuild(Build);
         }
+
         private void NavigateToBuild(Build build)
         {
             if (build != null)
@@ -340,14 +312,13 @@ namespace BWDB.Universal
                 var isPhoneUI = (AdaptiveState.CurrentState == PhoneUI);
                 if (isPhoneUI)
                 {
-                    LeftPageFrame.Visibility = Visibility.Collapsed;
                     View.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 }
 
+                MainPageFrame.BackStack.Clear();
                 MainPageFrame.Navigate(typeof(DetailPage), build);
                 MainPageFrame.Visibility = Visibility.Visible;
-                appTitleBar.ButtonForegroundColor = Colors.Black;
-                
+                appTitleBar.ButtonForegroundColor = ((Color)Application.Current.Resources["SystemBaseHighColor"]);
             }
 
         }
@@ -355,6 +326,8 @@ namespace BWDB.Universal
         private void SearchToggle_Checked(object sender, RoutedEventArgs e)
         {
             SearchBox.Focus(FocusState.Keyboard);
+            BuildZoomInListView.ItemsSource = null;
+            BuildZoomOutListView.ItemsSource = null;
         }
 
         private void SearchToggle_Unchecked(object sender, RoutedEventArgs e)
@@ -383,15 +356,9 @@ namespace BWDB.Universal
             Appbar.IsOpen = false;
         }
 
-        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        private void SettingDialogCloseButton_Click(object sender, RoutedEventArgs e)
         {
-            var navigationView = SystemNavigationManager.GetForCurrentView();
-
-            SplitView.IsPaneOpen = false;
-            ExternalFrame.Visibility = Visibility.Visible;
-            ExternalFrame.Navigate(typeof(SettingPage));
-
-            navigationView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            SettingDialog.Hide();
         }
     }
 }

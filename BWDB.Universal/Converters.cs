@@ -258,7 +258,13 @@ namespace BWDB.Universal
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            var ret = Visibility.Collapsed;
+            if (value != null)
+            {
+                if ((Visibility)value == Visibility.Collapsed) ret = Visibility.Visible;
+            }
+
+            return ret;
         }
     }
 
